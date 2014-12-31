@@ -9,6 +9,9 @@ const string g_str_endpoint = "tcp://127.0.0.1:7799";
 //const char * g_str_filepath = "result.txt";
 const char*  g_str_subendpoint = "tcp://192.168.15.200:7799";
 const char*  g_str_subid = "sub1";
+const char*  g_str_pubendpoint = "tcp://127.0.0.1:7711";
+const char*  g_str_pubid = "pub1";
+const char*  g_str_pubtopic = "88";
 
 FILE*      g_file_outputfile;         //输出文本文件，用于测试
 time_t     g_timenow;            //输出时间，用于测试
@@ -32,9 +35,9 @@ KLineData g_md_KlineFifteenMinut[g_num_KlineFifteenMinutCntMax];      //十五分钟
 KLineData g_md_KlineThirtyMinut[g_num_KlineThirtyMinutCntMax];        //三十分钟
 KLineData g_md_KlineOneHour[g_num_KlineOneHourCntMax];                //一小时
 
-class ReplyActor : public Actor {
+class SubActor : public Actor {
 public:
-	ReplyActor(const std::string& id) : Actor(id) {}
+	SubActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
 		Subscribe(g_str_subid, "83");
@@ -68,14 +71,15 @@ public:
 			StockCode.append(g_md_DataStore[g_num_DataStoreCnt].Code);
 			if (StockCode != "000001.SZ")       //判断是否是需要解析的股票代码
 			{
-				printf("code match fail!%s\n", g_md_DataStore[g_num_DataStoreCnt].Code);
+				//printf("code match fail!%s\n", g_md_DataStore[g_num_DataStoreCnt].Code);
 				return -1;
 			}
 			else
 			{
 				fprintf(g_file_outputfile, "stop time:%s\n", g_chtimenow);
 				fprintf(g_file_outputfile, "data:%s\n", e.message());
-				printf("data:%s\n", e.message());
+				//printf("data:%s\n", e.message());
+				cout << ".";
 				if (g_num_DataStoreCnt < 1)
 				{
 					g_num_DataStoreCnt++;   //保存9:30分前的一个到达的数据
@@ -105,41 +109,54 @@ public:
 				g_md_DataStore[0] = g_md_DataStore[g_num_DataStoreCnt - 1]; //下一分钟的第一个存为首个数据
 				g_md_DataStore[1] = g_md_DataStore[g_num_DataStoreCnt];
 				g_num_DataStoreCnt = 2;                                 //分钟内计数复位
+				string m_str_message;
+				KLineData2String(g_md_KlineOneMinute[g_num_KlineOneMinuteCnt], m_str_message);
+				
+				if (Publish(g_str_pubid, g_str_pubtopic, m_str_message))
+				{
+					printf("publish success.\n");
+				}
+				else
+				{
+					printf("publish fail.\n");
+				}
 
 				//计算5分钟线
-				if ((g_num_KlineOneMinuteCnt > 0) && ((((g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time / 100000) % 100 + 1) % 5) == 0)) //分钟位对5求余
+				if ((g_num_KlineOneMinuteCnt > 0) && ((((g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time / 100000) % 100 + 1) % 5) == 0)  //分钟位对5求余
+					&& ((g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time/100000)!=1129))   //时间是1129的话，不处理，将数据全部累计给Timer处理
 				{
-					KlineFromKline(g_num_KlineFiveMinuteCnt * 5, g_num_KlineOneMinuteCnt, g_md_KlineOneMinute, g_md_KlineFiveMinute[g_num_KlineFiveMinuteCnt]);
+					KlineFromKline((g_num_KlineOneMinuteCnt > 4 ? g_num_KlineOneMinuteCnt - 4 : 0), g_num_KlineOneMinuteCnt, g_md_KlineOneMinute, g_md_KlineFiveMinute[g_num_KlineFiveMinuteCnt]);
 					fprintf(g_file_outputfile, "5 time:%d,open:%d,high:%d,low:%d,close:%d,volume:%d,turnover:%d\n", g_md_KlineFiveMinute[g_num_KlineFiveMinuteCnt].Time, g_md_KlineFiveMinute[g_num_KlineFiveMinuteCnt].Open, g_md_KlineFiveMinute[g_num_KlineFiveMinuteCnt].High,
 						g_md_KlineFiveMinute[g_num_KlineFiveMinuteCnt].Low, g_md_KlineFiveMinute[g_num_KlineFiveMinuteCnt].Close, g_md_KlineFiveMinute[g_num_KlineFiveMinuteCnt].Volume, g_md_KlineFiveMinute[g_num_KlineFiveMinuteCnt].Turnover);
+
+					//计算10分钟线
+					if((((g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time / 100000) % 100 + 1) % 10) == 0)
+					{
+						KlineFromKline((g_num_KlineFiveMinuteCnt > 0 ? g_num_KlineFiveMinuteCnt - 1 : 0), g_num_KlineFiveMinuteCnt, g_md_KlineFiveMinute, g_md_KlineTenMinute[g_num_KlineFiveMinuteCnt]);
+						g_num_KlineTenMinuteCnt++;//10分钟线统计数据下标后移
+					}
+					//计算15分钟线
+					if ((((g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time / 100000) % 100 + 1) % 15) == 0)
+					{
+						KlineFromKline((g_num_KlineFiveMinuteCnt > 0 ? g_num_KlineFiveMinuteCnt - 2 : 0), g_num_KlineFiveMinuteCnt, g_md_KlineFiveMinute, g_md_KlineFifteenMinut[g_num_KlineFifteenMinutCnt]);
+						g_num_KlineFifteenMinutCnt++;//15分钟线统计数据下标后移
+					}
+					//计算30分钟线
+					if ((((g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time / 100000) % 100 + 1) % 30) == 0)
+					{
+						KlineFromKline((g_num_KlineFiveMinuteCnt > 0 ? g_num_KlineFiveMinuteCnt - 5 : 0), g_num_KlineFiveMinuteCnt, g_md_KlineFiveMinute, g_md_KlineThirtyMinut[g_num_KlineThirtyMinutCnt]);
+						g_num_KlineThirtyMinutCnt++;//30分钟线统计数据下标后移
+					}
+					//计算60分钟线
+					if ((g_num_KlineOneMinuteCnt > 0) && ((((g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time / 100000) % 100 + 1) % 60) == 0))
+					{
+						KlineFromKline((g_num_KlineFiveMinuteCnt > 0 ? g_num_KlineFiveMinuteCnt - 11 : 0), g_num_KlineFiveMinuteCnt, g_md_KlineFiveMinute, g_md_KlineOneHour[g_num_KlineOneHourCnt]);
+						g_num_KlineOneHourCnt++;//1小时线统计数据下标后移
+					}
 
 					g_num_KlineFiveMinuteCnt++;   //5分钟线统计数据下标后移
 				}
 
-				////计算10分钟线
-				if ((g_num_KlineOneMinuteCnt > 0) && ((((g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time / 100000) % 100 + 1) % 10) == 0))
-				{
-					KlineFromKline(g_num_KlineTenMinuteCnt * 10, g_num_KlineOneMinuteCnt, g_md_KlineOneMinute, g_md_KlineTenMinute[g_num_KlineTenMinuteCnt]);
-					g_num_KlineTenMinuteCnt++;//10分钟线统计数据下标后移
-				}
-				////计算15分钟线
-				//if ((g_num_KlineOneMinuteCnt > 0) && ((((g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time / 100000) % 100 + 1) % 15) == 0))
-				//{
-				//	KlineFromKline(g_num_KlineFifteenMinutCnt * 15 + 1, g_num_KlineOneMinuteCnt, g_md_KlineOneMinute, g_md_KlineFifteenMinut[g_num_KlineFifteenMinutCnt]);
-				//	g_num_KlineFifteenMinutCnt++;//15分钟线统计数据下标后移
-				//}
-				////计算30分钟线
-				//if ((g_num_KlineOneMinuteCnt > 0) && ((((g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time / 100000) % 100 + 1) % 30) == 0))
-				//{
-				//	KlineFromKline(g_num_KlineThirtyMinutCnt * 10 + 1, g_num_KlineOneMinuteCnt, g_md_KlineOneMinute, g_md_KlineThirtyMinut[g_num_KlineThirtyMinutCnt]);
-				//	g_num_KlineThirtyMinutCnt++;//30分钟线统计数据下标后移
-				//}
-				////计算60分钟线
-				//if ((g_num_KlineOneMinuteCnt > 0) && ((((g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time / 100000) % 100 + 1) % 60) == 0))
-				//{
-				//	KlineFromKline(g_num_KlineOneHourCnt * 60 + 1, g_num_KlineOneMinuteCnt, g_md_KlineOneMinute, g_md_KlineOneHour[g_num_KlineOneHourCnt]);
-				//	g_num_KlineOneHourCnt++;//1小时线统计数据下标后移
-				//}
 				g_num_KlineOneMinuteCnt++;  //1分钟线统计数据下标后移
 				return 0;
 			}
@@ -149,6 +166,75 @@ public:
 				g_num_DataStoreCnt = 0;
 		}
 
+		return 0;
+	}
+};
+
+class TimerActor : public Actor {
+public:
+	TimerActor(const std::string& id) : Actor(id) {}
+	int OnStart(ActorContext&)
+	{
+		AddTimer(60000);
+		return 0;
+	}
+	int OnEvent(Event& e)
+	{
+		DateAndTime m_DateAndTime = GetDateAndTime();
+		if ((m_DateAndTime.time >= 113100000 && m_DateAndTime.time < 125959999) || (m_DateAndTime.time >= 150100000)) //时间在此区间内时，发送最后一条消息,ps:获取数据时间判断不起作用(31分就没数据了)，所以用这个方法
+		{
+			if ((g_md_DataStore[g_num_DataStoreCnt].Time / 100000)<=1129) //最后一条数据发生在1130之前，强制加入1130分钟数据，数据全部为0，方便统计
+			{
+				KlineFromMaketData(0, g_num_DataStoreCnt, g_md_DataStore, g_md_KlineOneMinute[g_num_KlineOneMinuteCnt]);//处理1129分钟的数据
+				g_num_KlineOneMinuteCnt++;
+				
+				strcpy_s(g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Code, g_md_KlineOneMinute[g_num_KlineOneMinuteCnt - 1].Code);//加入1130空数据
+				g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Date = g_md_KlineOneMinute[g_num_KlineOneMinuteCnt - 1].Date;
+				g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Time = 113059999;
+				g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].TimeStatus = OneMinute;
+				g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].PreClose = g_md_KlineOneMinute[g_num_KlineOneMinuteCnt - 1].Close;
+				g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Open = g_md_KlineOneMinute[g_num_KlineOneMinuteCnt - 1].Close;
+				g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Close = g_md_KlineOneMinute[g_num_KlineOneMinuteCnt - 1].Close;
+				g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].High = g_md_KlineOneMinute[g_num_KlineOneMinuteCnt - 1].Close;
+				g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Low = g_md_KlineOneMinute[g_num_KlineOneMinuteCnt - 1].Close;
+				g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Volume = 0;
+				g_md_KlineOneMinute[g_num_KlineOneMinuteCnt].Turnover = 0;
+			}
+			KlineFromMaketData(0, g_num_DataStoreCnt, g_md_DataStore, g_md_KlineOneMinute[g_num_KlineOneMinuteCnt]);
+			g_md_DataStore[0] = g_md_DataStore[g_num_DataStoreCnt]; //113100000前的最后一个数据存为下一分钟的首个数据
+			g_num_DataStoreCnt = 1;                                 //分钟内计数复位
+			g_num_KlineOneMinuteCnt++;  //1分钟线统计数据下标后移
+
+			//publish
+			string m_str_message;
+			KLineData2String(g_md_KlineOneMinute[g_num_KlineOneMinuteCnt], m_str_message);
+			if (Publish(g_str_pubid, g_str_pubtopic, m_str_message))
+			{
+				printf("publish success.\n");
+			}
+			else
+			{
+				printf("publish fail.\n");
+			}
+
+			KlineFromKline((g_num_KlineOneMinuteCnt > 4 ? g_num_KlineOneMinuteCnt - 4 : 0), g_num_KlineOneMinuteCnt, g_md_KlineOneMinute, g_md_KlineFiveMinute[g_num_KlineFiveMinuteCnt]);
+			//计算10分钟线
+			KlineFromKline((g_num_KlineFiveMinuteCnt > 0 ? g_num_KlineFiveMinuteCnt - 1 : 0), g_num_KlineFiveMinuteCnt, g_md_KlineFiveMinute, g_md_KlineTenMinute[g_num_KlineFiveMinuteCnt]);
+			g_num_KlineTenMinuteCnt++;//10分钟线统计数据下标后移
+			//计算15分钟线
+			KlineFromKline((g_num_KlineFiveMinuteCnt > 0 ? g_num_KlineFiveMinuteCnt - 2 : 0), g_num_KlineFiveMinuteCnt, g_md_KlineFiveMinute, g_md_KlineFifteenMinut[g_num_KlineFifteenMinutCnt]);
+			g_num_KlineFifteenMinutCnt++;//15分钟线统计数据下标后移
+			//计算30分钟线
+			KlineFromKline((g_num_KlineFiveMinuteCnt > 0 ? g_num_KlineFiveMinuteCnt - 5 : 0), g_num_KlineFiveMinuteCnt, g_md_KlineFiveMinute, g_md_KlineThirtyMinut[g_num_KlineThirtyMinutCnt]);
+			g_num_KlineThirtyMinutCnt++;//30分钟线统计数据下标后移
+			//计算60分钟线
+			KlineFromKline((g_num_KlineFiveMinuteCnt > 0 ? g_num_KlineFiveMinuteCnt - 11 : 0), g_num_KlineFiveMinuteCnt, g_md_KlineFiveMinute, g_md_KlineOneHour[g_num_KlineOneHourCnt]);
+			g_num_KlineOneHourCnt++;//1小时线统计数据下标后移
+
+			g_num_KlineFiveMinuteCnt++;   //5分钟线统计数据下标后移
+
+
+		}
 		return 0;
 	}
 };
@@ -171,8 +257,11 @@ int main(int argc, char* argv[]) {
 
 	stage.Bind("tcp://*:5555");
 	stage.AddSubscriber(g_str_subid, g_str_subendpoint);
-	ActorPtr actor(new ReplyActor("aa"));
-	stage.AddActor(actor);
+	stage.AddPublisher(g_str_pubid, g_str_pubendpoint);
+	ActorPtr Sub_Actor(new SubActor("sub"));
+	ActorPtr Timer_Actor(new TimerActor("timer"));
+	stage.AddActor(Sub_Actor);
+	stage.AddActor(Timer_Actor);
 	//stage.Connect(g_str_connid, g_str_subendpoint);
 	stage.Start();
 	stage.Join();

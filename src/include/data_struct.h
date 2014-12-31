@@ -54,4 +54,14 @@ struct KLineData
 	N8 Turnover;        //成交总额
 };
 
+struct MacdData
+{
+	Cc Code[16];        //证券代码
+	N4 Date;            //日期
+	N4 Time;            //时间
+	N4 MACD;            //MACD(DIF)=EMA12-EMA26
+	N4 MACDSignal;      //MACDSignal(DEA)=EMA(MACD,9),MACD的9日移动平均线
+	N4 MACDHist;        //MACDHist(MACD)=MACD-MACDSignal
+};
+
 #endif

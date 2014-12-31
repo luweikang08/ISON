@@ -16,7 +16,8 @@
 #include "windows.h"
 
 #include "jsonhelper.h"
-#include "kline_proc.h"
+#include "timehelper.h"
+#include "klinehelper.h"
 
 #define g_num_DataStoreCntMax          30
 #define g_num_KlineOneMinuteCntMax     242 //9:30:00.000-11:29:59.999  13:00:00.000-14:59:59.999,

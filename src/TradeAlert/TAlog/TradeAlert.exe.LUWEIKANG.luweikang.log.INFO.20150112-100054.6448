@@ -1,0 +1,5 @@
+Log file created at: 2015/01/12 10:00:54
+Running on machine: LUWEIKANG
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0112 10:00:54.263535  3832 TradeAlert.cpp:160] config.json:read success.
+I0112 10:01:01.388592  3832 TradeAlert.cpp:181] version or date set error,please check it!

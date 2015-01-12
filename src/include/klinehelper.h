@@ -1,5 +1,5 @@
-#ifndef __ISON_SDS_KLINE_PROC_H__
-#define __ISON_SDS_KLINE_PROC_H__
+#ifndef __ISON_SDS_KLINE_HELPER_H__
+#define __ISON_SDS_KLINE_HELPER_H__
 
 #include <iostream>
 #include "document.h"

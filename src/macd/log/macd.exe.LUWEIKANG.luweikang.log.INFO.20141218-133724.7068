@@ -1,0 +1,4 @@
+Log file created at: 2014/12/18 13:37:24
+Running on machine: LUWEIKANG
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1218 13:37:24.939453  8008 stage.cc:84] [stage] bind to tcp://*:7799 on port: 7799

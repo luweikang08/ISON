@@ -1,0 +1,14 @@
+Log file created at: 2014/12/18 13:51:48
+Running on machine: LUWEIKANG
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1218 13:51:48.668128  1244 stage.cc:84] [stage] bind to tcp://*:7799 on port: 7799
+I1218 13:51:48.670128  1244 stage.cc:50] AddActor: test
+W1218 13:51:48.670128  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+I1218 13:51:48.674119  1244 stage.cc:235] [AddSubscriber] sub_id: sub1 endpoint: tcp://127.0.0.1:7799
+I1218 13:51:48.675119  9208 stage.cc:577] [stage] Run

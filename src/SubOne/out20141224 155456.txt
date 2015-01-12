@@ -1,0 +1,396 @@
+sub start time:20141224 155456 789
+sub store time:20141224 16222 879
+timedata:sdstime:160215813,atradetime:160215820,localtime:160222879
+sub store time:20141224 16229 403
+timedata:sdstime:160216217,atradetime:160216243,localtime:160229403
+sub store time:20141224 16229 404
+timedata:sdstime:160216599,atradetime:160216668,localtime:160229404
+sub store time:20141224 16229 404
+timedata:sdstime:160216692,atradetime:160216806,localtime:160229404
+sub store time:20141224 16229 405
+timedata:sdstime:160216898,atradetime:160216919,localtime:160229405
+sub store time:20141224 16229 406
+timedata:sdstime:160217000,atradetime:160217078,localtime:160229406
+sub store time:20141224 16229 406
+timedata:sdstime:160217059,atradetime:160217159,localtime:160229406
+sub store time:20141224 16229 406
+timedata:sdstime:160217072,atradetime:160217173,localtime:160229406
+sub store time:20141224 16229 407
+timedata:sdstime:160217100,atradetime:160217227,localtime:160229407
+sub store time:20141224 16229 407
+timedata:sdstime:160217126,atradetime:160217252,localtime:160229407
+sub store time:20141224 16229 408
+timedata:sdstime:160217364,atradetime:160217471,localtime:160229408
+sub store time:20141224 16229 408
+timedata:sdstime:160217405,atradetime:160217510,localtime:160229408
+sub store time:20141224 16229 408
+timedata:sdstime:160217492,atradetime:160217564,localtime:160229408
+sub store time:20141224 16229 408
+timedata:sdstime:160217672,atradetime:160217737,localtime:160229408
+sub store time:20141224 16229 409
+timedata:sdstime:160218016,atradetime:160218019,localtime:160229409
+sub store time:20141224 16229 409
+timedata:sdstime:160218087,atradetime:160218112,localtime:160229409
+sub store time:20141224 16229 409
+timedata:sdstime:160218199,atradetime:160218292,localtime:160229409
+sub store time:20141224 16229 409
+timedata:sdstime:160218503,atradetime:160218518,localtime:160229409
+sub store time:20141224 16229 409
+timedata:sdstime:160218523,atradetime:160218564,localtime:160229409
+sub store time:20141224 16229 409
+timedata:sdstime:160218586,atradetime:160218649,localtime:160229409
+sub store time:20141224 16229 410
+timedata:sdstime:160218654,atradetime:160218761,localtime:160229410
+sub store time:20141224 16229 410
+timedata:sdstime:160218915,atradetime:160218934,localtime:160229410
+sub store time:20141224 16229 410
+timedata:sdstime:160218939,atradetime:160218957,localtime:160229410
+sub store time:20141224 16229 410
+timedata:sdstime:160218991,atradetime:160219031,localtime:160229410
+sub store time:20141224 16229 410
+timedata:sdstime:160219069,atradetime:160219154,localtime:160229410
+sub store time:20141224 16229 410
+timedata:sdstime:160219405,atradetime:160219433,localtime:160229410
+sub store time:20141224 16229 411
+timedata:sdstime:160219922,atradetime:160219926,localtime:160229411
+sub store time:20141224 16229 411
+timedata:sdstime:160219922,atradetime:160219926,localtime:160229411
+sub store time:20141224 16229 411
+sub store time:20141224 16229 411
+sub store time:20141224 16229 411
+sub store time:20141224 16229 411
+sub store time:20141224 16229 411
+sub store time:20141224 16229 412
+sub store time:20141224 16229 412
+sub store time:20141224 16229 412
+sub store time:20141224 16229 412
+sub store time:20141224 16229 412
+sub store time:20141224 16229 412
+sub store time:20141224 16229 413
+sub store time:20141224 16229 413
+sub store time:20141224 16229 413
+timedata:sdstime:160221395,atradetime:160221399,localtime:160229413
+sub store time:20141224 16229 413
+sub store time:20141224 16229 414
+sub store time:20141224 16229 414
+sub store time:20141224 16229 414
+sub store time:20141224 16229 414
+sub store time:20141224 16229 415
+timedata:sdstime:160223720,atradetime:160223720,localtime:160229415
+sub store time:20141224 16229 415
+timedata:sdstime:160223720,atradetime:160223720,localtime:160229415
+sub store time:20141224 16229 415
+sub store time:20141224 16229 415
+sub store time:20141224 16229 416
+sub store time:20141224 16229 416
+sub store time:20141224 16229 416
+sub store time:20141224 16229 417
+timedata:sdstime:160224624,atradetime:160224624,localtime:160229417
+sub store time:20141224 16229 417
+sub store time:20141224 16229 418
+sub store time:20141224 16229 418
+sub store time:20141224 16229 418
+sub store time:20141224 16229 418
+sub store time:20141224 16229 418
+timedata:sdstime:160226139,atradetime:160226139,localtime:160229418
+sub store time:20141224 16229 419
+sub store time:20141224 16229 419
+sub store time:20141224 16229 419
+sub store time:20141224 16229 419
+sub store time:20141224 16229 420
+sub store time:20141224 16229 420
+sub store time:20141224 16229 420
+sub store time:20141224 16229 420
+sub store time:20141224 16229 420
+timedata:sdstime:160227376,atradetime:160227376,localtime:160229420
+sub store time:20141224 16229 421
+sub store time:20141224 16229 421
+sub store time:20141224 16229 421
+sub store time:20141224 16229 421
+sub store time:20141224 16229 422
+sub store time:20141224 16229 422
+timedata:sdstime:160228593,atradetime:160228593,localtime:160229422
+sub store time:20141224 16229 422
+sub store time:20141224 16229 422
+sub store time:20141224 16229 423
+sub store time:20141224 16229 423
+sub store time:20141224 16229 423
+sub store time:20141224 16229 424
+sub store time:20141224 16229 424
+sub store time:20141224 16229 574
+sub store time:20141224 16229 620
+timedata:sdstime:160229554,atradetime:160229554,localtime:160229620
+sub store time:20141224 16230 164
+sub store time:20141224 16230 278
+sub store time:20141224 16230 437
+sub store time:20141224 16230 535
+timedata:sdstime:160230457,atradetime:160230462,localtime:160230535
+sub store time:20141224 16230 785
+sub store time:20141224 16230 786
+sub store time:20141224 16231 81
+timedata:sdstime:160231015,atradetime:160231015,localtime:160231081
+sub store time:20141224 16231 136
+sub store time:20141224 16231 193
+sub store time:20141224 16231 383
+sub store time:20141224 16231 384
+sub store time:20141224 16231 384
+sub store time:20141224 16231 384
+sub store time:20141224 16231 385
+sub store time:20141224 16231 386
+sub store time:20141224 16231 418
+timedata:sdstime:160231351,atradetime:160231351,localtime:160231418
+sub store time:20141224 16231 681
+sub store time:20141224 16231 682
+sub store time:20141224 16231 730
+sub store time:20141224 16231 804
+timedata:sdstime:160231734,atradetime:160231736,localtime:160231804
+sub store time:20141224 16232 52
+sub store time:20141224 16232 52
+sub store time:20141224 16232 54
+sub store time:20141224 16232 311
+timedata:sdstime:160232244,atradetime:160232244,localtime:160232311
+sub store time:20141224 16232 598
+sub store time:20141224 16232 673
+timedata:sdstime:160232606,atradetime:160232606,localtime:160232673
+sub store time:20141224 16232 891
+sub store time:20141224 16232 992
+sub store time:20141224 16232 993
+sub store time:20141224 16233 257
+timedata:sdstime:160233190,atradetime:160233190,localtime:160233257
+sub store time:20141224 16233 798
+timedata:sdstime:160233731,atradetime:160233731,localtime:160233798
+sub store time:20141224 16233 911
+sub store time:20141224 16233 946
+sub store time:20141224 16234 83
+sub store time:20141224 16234 147
+timedata:sdstime:160234081,atradetime:160234081,localtime:160234147
+sub store time:20141224 16234 374
+sub store time:20141224 16234 374
+sub store time:20141224 16234 374
+sub store time:20141224 16234 375
+sub store time:20141224 16234 474
+sub store time:20141224 16234 734
+timedata:sdstime:160234667,atradetime:160234667,localtime:160234734
+sub store time:20141224 16234 977
+sub store time:20141224 16234 977
+sub store time:20141224 16235 96
+sub store time:20141224 16235 289
+timedata:sdstime:160235223,atradetime:160235223,localtime:160235289
+sub store time:20141224 16235 639
+sub store time:20141224 16235 640
+sub store time:20141224 16235 667
+sub store time:20141224 16235 711
+timedata:sdstime:160235643,atradetime:160235643,localtime:160235711
+sub store time:20141224 16235 965
+sub store time:20141224 16235 965
+sub store time:20141224 16235 965
+sub store time:20141224 16235 967
+sub store time:20141224 16235 997
+sub store time:20141224 16235 997
+sub store time:20141224 16236 250
+timedata:sdstime:160236180,atradetime:160236180,localtime:160236250
+sub store time:20141224 16236 538
+sub store time:20141224 16236 538
+sub store time:20141224 16236 539
+sub store time:20141224 16236 543
+sub store time:20141224 16236 553
+sub store time:20141224 16236 554
+sub store time:20141224 16236 588
+sub store time:20141224 16236 605
+timedata:sdstime:160236538,atradetime:160236539,localtime:160236605
+sub store time:20141224 16236 824
+sub store time:20141224 16236 923
+sub store time:20141224 16237 181
+timedata:sdstime:160237101,atradetime:160237101,localtime:160237181
+sub store time:20141224 16237 515
+sub store time:20141224 16237 523
+sub store time:20141224 16237 523
+sub store time:20141224 16237 701
+timedata:sdstime:160237630,atradetime:160237632,localtime:160237701
+sub store time:20141224 16238 37
+sub store time:20141224 16238 387
+timedata:sdstime:160238317,atradetime:160238317,localtime:160238387
+sub store time:20141224 16238 712
+sub store time:20141224 16238 712
+sub store time:20141224 16238 739
+sub store time:20141224 16238 739
+sub store time:20141224 16238 955
+timedata:sdstime:160238887,atradetime:160238887,localtime:160238955
+sub store time:20141224 16239 300
+sub store time:20141224 16239 300
+sub store time:20141224 16239 501
+timedata:sdstime:160239433,atradetime:160239433,localtime:160239501
+sub store time:20141224 16239 698
+sub store time:20141224 16239 698
+sub store time:20141224 16239 699
+sub store time:20141224 16239 699
+sub store time:20141224 16239 699
+sub store time:20141224 16240 52
+sub store time:20141224 16240 53
+sub store time:20141224 16240 105
+sub store time:20141224 16240 118
+sub store time:20141224 16240 187
+timedata:sdstime:160240078,atradetime:160240078,localtime:160240187
+sub store time:20141224 16240 839
+sub store time:20141224 16241 125
+sub store time:20141224 16241 171
+sub store time:20141224 16241 172
+sub store time:20141224 16241 172
+sub store time:20141224 16241 172
+sub store time:20141224 16241 173
+sub store time:20141224 16241 173
+sub store time:20141224 16241 173
+sub store time:20141224 16241 173
+sub store time:20141224 16241 174
+sub store time:20141224 16241 174
+sub store time:20141224 16241 174
+sub store time:20141224 16241 357
+timedata:sdstime:160241289,atradetime:160241289,localtime:160241357
+sub store time:20141224 16241 498
+sub store time:20141224 16241 505
+sub store time:20141224 16241 505
+sub store time:20141224 16241 701
+sub store time:20141224 16241 707
+sub store time:20141224 16241 707
+sub store time:20141224 16241 709
+sub store time:20141224 16241 711
+sub store time:20141224 16241 711
+sub store time:20141224 16241 711
+sub store time:20141224 16241 712
+sub store time:20141224 16241 728
+sub store time:20141224 16241 728
+sub store time:20141224 16241 728
+sub store time:20141224 16241 729
+sub store time:20141224 16241 730
+sub store time:20141224 16241 735
+sub store time:20141224 16241 736
+sub store time:20141224 16241 736
+sub store time:20141224 16241 736
+sub store time:20141224 16241 752
+timedata:sdstime:160241685,atradetime:160241685,localtime:160241752
+sub store time:20141224 16242 63
+sub store time:20141224 16242 63
+sub store time:20141224 16242 273
+sub store time:20141224 16242 332
+sub store time:20141224 16242 333
+sub store time:20141224 16242 352
+timedata:sdstime:160242277,atradetime:160242277,localtime:160242352
+sub store time:20141224 16242 641
+sub store time:20141224 16242 898
+sub store time:20141224 16242 898
+sub store time:20141224 16242 995
+timedata:sdstime:160242925,atradetime:160242925,localtime:160242995
+sub store time:20141224 16243 199
+sub store time:20141224 16243 223
+sub store time:20141224 16243 276
+sub store time:20141224 16243 337
+sub store time:20141224 16243 338
+sub store time:20141224 16243 531
+timedata:sdstime:160243449,atradetime:160243449,localtime:160243531
+sub store time:20141224 16243 943
+sub store time:20141224 16244 174
+timedata:sdstime:160244103,atradetime:160244103,localtime:160244174
+sub store time:20141224 16244 567
+timedata:sdstime:160244493,atradetime:160244493,localtime:160244567
+sub store time:20141224 16244 860
+sub store time:20141224 16245 77
+sub store time:20141224 16245 101
+sub store time:20141224 16245 120
+timedata:sdstime:160245051,atradetime:160245051,localtime:160245120
+sub store time:20141224 16245 705
+sub store time:20141224 16245 707
+sub store time:20141224 16245 711
+sub store time:20141224 16245 713
+sub store time:20141224 16245 731
+sub store time:20141224 16245 742
+timedata:sdstime:160245668,atradetime:160245668,localtime:160245742
+sub store time:20141224 16246 259
+sub store time:20141224 16246 260
+sub store time:20141224 16246 322
+timedata:sdstime:160246255,atradetime:160246255,localtime:160246322
+sub store time:20141224 16246 531
+sub store time:20141224 16246 889
+timedata:sdstime:160246822,atradetime:160246822,localtime:160246889
+sub store time:20141224 16247 726
+timedata:sdstime:160247658,atradetime:160247658,localtime:160247726
+sub store time:20141224 16247 821
+sub store time:20141224 16247 821
+sub store time:20141224 16248 375
+timedata:sdstime:160248308,atradetime:160248308,localtime:160248375
+sub store time:20141224 16248 436
+sub store time:20141224 16248 654
+sub store time:20141224 16248 729
+timedata:sdstime:160248662,atradetime:160248662,localtime:160248729
+sub store time:20141224 16248 939
+sub store time:20141224 16248 940
+sub store time:20141224 16248 940
+sub store time:20141224 16248 942
+sub store time:20141224 16248 942
+sub store time:20141224 16248 943
+sub store time:20141224 16248 943
+sub store time:20141224 16248 943
+sub store time:20141224 16248 943
+sub store time:20141224 16248 944
+sub store time:20141224 16249 254
+sub store time:20141224 16249 312
+timedata:sdstime:160249236,atradetime:160249236,localtime:160249312
+sub store time:20141224 16249 940
+timedata:sdstime:160249797,atradetime:160249798,localtime:160249940
+sub store time:20141224 16249 940
+sub store time:20141224 16249 940
+sub store time:20141224 16249 940
+sub store time:20141224 16250 312
+timedata:sdstime:160250209,atradetime:160250209,localtime:160250312
+sub store time:20141224 16250 538
+sub store time:20141224 16250 932
+sub store time:20141224 16250 933
+timedata:sdstime:160250774,atradetime:160250774,localtime:160250933
+sub store time:20141224 16251 454
+timedata:sdstime:160251384,atradetime:160251384,localtime:160251454
+sub store time:20141224 16251 749
+sub store time:20141224 16251 980
+timedata:sdstime:160251910,atradetime:160251910,localtime:160251980
+sub store time:20141224 16252 80
+sub store time:20141224 16252 81
+sub store time:20141224 16252 87
+sub store time:20141224 16252 107
+sub store time:20141224 16252 108
+sub store time:20141224 16252 589
+timedata:sdstime:160252521,atradetime:160252521,localtime:160252589
+sub store time:20141224 16252 698
+sub store time:20141224 16252 698
+sub store time:20141224 16252 699
+sub store time:20141224 16252 781
+sub store time:20141224 16253 4
+timedata:sdstime:160252928,atradetime:160252928,localtime:160253004
+sub store time:20141224 16253 257
+sub store time:20141224 16253 262
+sub store time:20141224 16253 539
+timedata:sdstime:160253467,atradetime:160253467,localtime:160253539
+sub store time:20141224 16254 365
+timedata:sdstime:160254218,atradetime:160254218,localtime:160254365
+sub store time:20141224 16254 641
+timedata:sdstime:160254547,atradetime:160254552,localtime:160254641
+sub store time:20141224 16254 958
+sub store time:20141224 16255 12
+sub store time:20141224 16255 25
+sub store time:20141224 16255 210
+timedata:sdstime:160255140,atradetime:160255140,localtime:160255210
+sub store time:20141224 16255 338
+sub store time:20141224 16255 687
+sub store time:20141224 16255 859
+timedata:sdstime:160255780,atradetime:160255791,localtime:160255859
+sub store time:20141224 16256 682
+timedata:sdstime:160256614,atradetime:160256614,localtime:160256682
+timedata:Min:66,Max:13160,Sum:348080,Cnt:84,Avg:4143
+sub store time:20141224 16256 964
+sub store time:20141224 16256 964
+sub store time:20141224 16257 184
+timedata:sdstime:160257116,atradetime:160257116,localtime:160257184
+sub store time:20141224 16257 586
+sub store time:20141224 16257 590
+timedata:sdstime:160257482,atradetime:160257482,localtime:160257590
+sub store time:20141224 16257 808
+sub store time:20141224 16257 808
+sub store time:20141224 16257 813
+sub store time:20141224 16257

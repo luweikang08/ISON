@@ -1,0 +1,10 @@
+Log file created at: 2014/12/18 13:51:48
+Running on machine: LUWEIKANG
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+W1218 13:51:48.670128  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource
+W1218 13:51:48.671134  1244 stage.cc:247] [Subscribe] cannot find subfromsource

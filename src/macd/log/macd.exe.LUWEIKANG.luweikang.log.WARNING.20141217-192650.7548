@@ -1,0 +1,9 @@
+Log file created at: 2014/12/17 19:26:50
+Running on machine: LUWEIKANG
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+W1217 19:26:50.646703  9872 stage.cc:247] [Subscribe] cannot find sub1
+W1217 19:26:50.646703  9872 stage.cc:247] [Subscribe] cannot find sub1
+W1217 19:26:50.646703  9872 stage.cc:247] [Subscribe] cannot find sub1
+W1217 19:26:50.646703  9872 stage.cc:247] [Subscribe] cannot find sub1
+W1217 19:26:50.646703  9872 stage.cc:247] [Subscribe] cannot find sub1
+W1217 19:26:50.646703  9872 stage.cc:247] [Subscribe] cannot find sub1

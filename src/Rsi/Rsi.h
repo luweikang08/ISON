@@ -1,5 +1,5 @@
-#ifndef  __ISON_SDS_MACD_H__
-#define  __ISON_SDS_MACD_H__
+#ifndef __ISON_SDS_RSI_H__
+#define __ISON_SDS_RSI_H__
 
 #include <iostream>
 #include "isonbase.h"
@@ -10,14 +10,12 @@
 #include "event.h"
 #include "ibprotocol.h"
 
+#include <queue>
 #include <fstream>
 #include <time.h>
-#include "windows.h"
-#include <queue>
-
+#include <Windows.h>
 #include "jsonhelper.h"
-#include "timehelper.h"
-#include "klinehelper.h"
-#include "macdhelper.h"
+#include "data_struct.h"
+#include "rsihelper.h"
 
-#endif 
+#endif

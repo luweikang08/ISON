@@ -1,0 +1,92 @@
+Log file created at: 2014/12/18 09:23:04
+Running on machine: LUWEIKANG
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1218 09:23:04.822403  9088 stage.cc:84] [stage] bind to tcp://*:5555 on port: 5555
+I1218 09:23:04.822403  9088 stage.cc:50] AddActor: test
+W1218 09:23:04.822403  9088 stage.cc:247] [Subscribe] cannot find sub1
+W1218 09:23:04.822403  9088 stage.cc:247] [Subscribe] cannot find sub1
+W1218 09:23:04.822403  9088 stage.cc:247] [Subscribe] cannot find sub1
+W1218 09:23:04.822403  9088 stage.cc:247] [Subscribe] cannot find sub1
+W1218 09:23:04.822403  9088 stage.cc:247] [Subscribe] cannot find sub1
+W1218 09:23:04.822403  9088 stage.cc:247] [Subscribe] cannot find sub1
+I1218 09:23:04.822403  9088 stage.cc:235] [AddSubscriber] sub_id: sub1 endpoint: tcp://192.168.15.200:7799
+I1218 09:23:04.822403  9088 stage.cc:137] [stage] connect to tcp://192.168.15.200:7799 id: con1
+I1218 09:23:04.822403  9044 stage.cc:577] [stage] Run
+I1218 09:23:15.050812  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 09:23:15.050812  9044 stage.cc:421] sender: TEST_ID
+I1218 09:23:15.050812  9044 stage.cc:422] receiver: test
+I1218 09:23:15.050812  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 09:23:15.060781  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 09:23:15.060781  9044 event.cc:29] [Reply] message: ok!
+I1218 09:23:16.874409  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 09:23:16.874409  9044 stage.cc:421] sender: TEST_ID
+I1218 09:23:16.875409  9044 stage.cc:422] receiver: test
+I1218 09:23:16.875409  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 09:23:16.881448  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 09:23:16.881448  9044 event.cc:29] [Reply] message: ok!
+I1218 09:23:17.538244  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 09:23:17.538244  9044 stage.cc:421] sender: TEST_ID
+I1218 09:23:17.538244  9044 stage.cc:422] receiver: test
+I1218 09:23:17.538244  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 09:23:17.544210  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 09:23:17.544210  9044 event.cc:29] [Reply] message: ok!
+I1218 09:23:17.738260  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 09:23:17.738260  9044 stage.cc:421] sender: TEST_ID
+I1218 09:23:17.739259  9044 stage.cc:422] receiver: test
+I1218 09:23:17.739259  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 09:23:17.746261  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 09:23:17.746261  9044 event.cc:29] [Reply] message: ok!
+I1218 09:23:17.882480  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 09:23:17.882480  9044 stage.cc:421] sender: TEST_ID
+I1218 09:23:17.882480  9044 stage.cc:422] receiver: test
+I1218 09:23:17.882480  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 09:23:17.891482  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 09:23:17.891482  9044 event.cc:29] [Reply] message: ok!
+I1218 09:23:18.019054  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 09:23:18.019054  9044 stage.cc:421] sender: TEST_ID
+I1218 09:23:18.019054  9044 stage.cc:422] receiver: test
+I1218 09:23:18.019054  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 09:23:18.027046  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 09:23:18.027046  9044 event.cc:29] [Reply] message: ok!
+I1218 09:23:18.287158  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 09:23:18.287158  9044 stage.cc:421] sender: TEST_ID
+I1218 09:23:18.287158  9044 stage.cc:422] receiver: test
+I1218 09:23:18.287158  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 09:23:18.302757  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 09:23:18.302757  9044 event.cc:29] [Reply] message: ok!
+I1218 09:23:18.775821  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 09:23:18.775821  9044 stage.cc:421] sender: TEST_ID
+I1218 09:23:18.775821  9044 stage.cc:422] receiver: test
+I1218 09:23:18.775821  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 09:23:18.775821  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 09:23:18.775821  9044 event.cc:29] [Reply] message: ok!
+I1218 09:23:18.957394  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 09:23:18.958394  9044 stage.cc:421] sender: TEST_ID
+I1218 09:23:18.958394  9044 stage.cc:422] receiver: test
+I1218 09:23:18.958394  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 09:23:18.964393  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 09:23:18.964393  9044 event.cc:29] [Reply] message: ok!
+I1218 09:23:19.257618  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 09:23:19.257618  9044 stage.cc:421] sender: TEST_ID
+I1218 09:23:19.257618  9044 stage.cc:422] receiver: test
+I1218 09:23:19.257618  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 09:23:19.257618  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 09:23:19.257618  9044 event.cc:29] [Reply] message: ok!
+I1218 10:17:37.579556  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 10:17:37.608616  9044 stage.cc:421] sender: TEST_ID
+I1218 10:17:37.608616  9044 stage.cc:422] receiver: test
+I1218 10:17:37.608616  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 10:17:37.645565  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 10:17:37.645565  9044 event.cc:29] [Reply] message: ok!
+I1218 10:17:38.168966  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 10:17:38.168966  9044 stage.cc:421] sender: TEST_ID
+I1218 10:17:38.168966  9044 stage.cc:422] receiver: test
+I1218 10:17:38.168966  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 10:17:38.176975  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 10:17:38.176975  9044 event.cc:29] [Reply] message: ok!
+I1218 10:17:38.694335  9044 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 10:17:38.694335  9044 stage.cc:421] sender: TEST_ID
+I1218 10:17:38.694335  9044 stage.cc:422] receiver: test
+I1218 10:17:38.694335  9044 stage.cc:424] message: {"MKT_TP_CODE":3}
+I1218 10:17:38.705306  9044 event.cc:28] [Reply] receiver: test sender: TEST_ID
+I1218 10:17:38.705306  9044 event.cc:29] [Reply] message: ok!

@@ -1,0 +1,30 @@
+{
+    "Kdj.exe":
+    {
+        "version":"0.00.01",
+        "volum":10000,
+        "turnover":1000000,
+        "extra_sell_volum":10000,
+        "extra_sell_turnover":1000000,
+        "extra_buy_volum":10000,
+        "extra_buy_turnover":1000000
+    },
+    "Kdj2":
+    {
+        "volum":10000,
+        "turnover":1000000,
+        "extra_sell_volum":10000,
+        "extra_sell_turnover":1000000,
+        "extra_buy_volum":10000,
+        "extra_buy_turnover":1000000
+    },
+    "Kdj3":
+    {
+        "volum":10000,
+        "turnover":1000000,
+        "extra_sell_volum":10000,
+        "extra_sell_turnover":1000000,
+        "extra_buy_volum":10000,
+        "extra_buy_turnover":1000000
+    }
+}

@@ -1,0 +1,19 @@
+                       TradeAlert Utility Update Notic
+	          ==========================================
+
+-------------------
+V0.00.02 2015/01/10
+-------------------
+	1. Add loglevel in config.json file.
+	2. Add LOG() and LOG_IF() in program.
+	3. Modify TOPICHEAD section, put data in TOPICHEAD.
+	4. Add UPDATE.TXT file to track.
+	TradeAlert.cpp TradeAlert.h 
+							 luweikang, 2015/01/10
+
+-------------------
+V0.00.01 2015/01/07
+-------------------
+	1. First Release.
+							 luweikang, 2015/01/07
+

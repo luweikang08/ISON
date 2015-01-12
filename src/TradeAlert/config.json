@@ -1,0 +1,1 @@
+{"TradeAlert.exe":{"version":"V0.00.01","releasedate":"2015/01/07","subtopic":"1014","subendpoint":"tcp://192.168.15.200:2010","pubtopic":"2011","pubendpoint":"tcp://127.0.0.1:1212","volum_limit":1234,"turnover_limit":12345,"extra_sell_volum_limit":123456,"extra_sell_turnover_limit":123457,"extra_buy_volum_limit":123458,"extra_buy_turnover_limit":132459}}

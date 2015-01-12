@@ -1,0 +1,14 @@
+Log file created at: 2014/12/18 13:55:13
+Running on machine: LUWEIKANG
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1218 13:55:13.310928  4472 stage.cc:84] [stage] bind to tcp://*:7799 on port: 7799
+I1218 13:55:13.313905  4472 stage.cc:50] AddActor: test
+W1218 13:55:13.313905  4472 stage.cc:247] [Subscribe] cannot find sub1
+W1218 13:55:13.314913  4472 stage.cc:247] [Subscribe] cannot find sub1
+W1218 13:55:13.314913  4472 stage.cc:247] [Subscribe] cannot find sub1
+W1218 13:55:13.314913  4472 stage.cc:247] [Subscribe] cannot find sub1
+W1218 13:55:13.314913  4472 stage.cc:247] [Subscribe] cannot find sub1
+W1218 13:55:13.314913  4472 stage.cc:247] [Subscribe] cannot find sub1
+W1218 13:55:13.314913  4472 stage.cc:247] [Subscribe] cannot find sub1
+I1218 13:55:13.317911  4472 stage.cc:235] [AddSubscriber] sub_id: sub1 endpoint: tcp://192.168.15.200:7799
+I1218 13:55:13.319921  6688 stage.cc:577] [stage] Run

@@ -1,0 +1,18 @@
+Log file created at: 2014/12/18 09:21:49
+Running on machine: LUWEIKANG
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1218 09:21:49.552137  2744 stage.cc:84] [stage] bind to tcp://*:5555 on port: 5555
+I1218 09:21:49.583436  2744 stage.cc:50] AddActor: test
+W1218 09:21:49.583436  2744 stage.cc:247] [Subscribe] cannot find sub1
+W1218 09:21:49.583436  2744 stage.cc:247] [Subscribe] cannot find sub1
+W1218 09:21:49.583436  2744 stage.cc:247] [Subscribe] cannot find sub1
+W1218 09:21:49.583436  2744 stage.cc:247] [Subscribe] cannot find sub1
+W1218 09:21:49.583436  2744 stage.cc:247] [Subscribe] cannot find sub1
+W1218 09:21:49.583436  2744 stage.cc:247] [Subscribe] cannot find sub1
+I1218 09:21:49.599000  2744 stage.cc:235] [AddSubscriber] sub_id: sub1 endpoint: tcp://192.168.15.200:7799
+I1218 09:21:49.599000  2744 stage.cc:137] [stage] connect to tcp://192.168.15.200:7799 id: con1
+I1218 09:21:49.599000  5728 stage.cc:577] [stage] Run
+I1218 09:22:22.085054  5728 stage.cc:391] OnSocket fd: 0 events: 1
+I1218 09:22:22.095252  5728 stage.cc:421] sender: TEST_ID
+I1218 09:22:22.095252  5728 stage.cc:422] receiver: test
+I1218 09:22:22.095252  5728 stage.cc:424] message: {"MKT_TP_CODE":3}

@@ -1,5 +1,12 @@
                        TradeAlert Utility Update Notic
 	          ==========================================
+-------------------
+V0.00.03 2015/01/12
+-------------------
+	1. Modify:support Subscribe() multiple topic,can read "subtopic":"1014,1114"
+	2. Modify:judge CC.Code[8] == 'Z',separate from shenzhen and shanghai
+	3. Modify:increase TOPICHEAD.sn,separate from shenzhen and shanghai
+					                                	              luweikang, 2015/01/13
 
 -------------------
 V0.00.02 2015/01/10
@@ -9,11 +16,11 @@ V0.00.02 2015/01/10
 	3. Modify TOPICHEAD section, put data in TOPICHEAD.
 	4. Add UPDATE.TXT file to track.
 	TradeAlert.cpp TradeAlert.h 
-							 luweikang, 2015/01/10
+							                                      luweikang, 2015/01/10
 
 -------------------
 V0.00.01 2015/01/07
 -------------------
 	1. First Release.
-							 luweikang, 2015/01/07
+							                                      luweikang, 2015/01/07
 

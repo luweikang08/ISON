@@ -16,7 +16,7 @@ int KlineFromMaketData(int StartIdx, int EndIdx, SDS_Level2 src[], KLineData& de
 	strcpy_s(dest.Code, src[EndIdx].Code);
 	dest.Date = src[EndIdx].Date;
 	dest.Time = src[EndIdx - 1].Time;    //本分钟内接收的最后一个数据的时间
-	dest.TimeStatus = OneMinute;
+	dest.TimeStat = OneMinute;
 	dest.PreClose = src[StartIdx].Price;
 	dest.Open = src[StartIdx + 1].Price;
 	dest.Close = src[EndIdx - 1].Price;
@@ -83,7 +83,7 @@ int KlineFromKline(int StartIdx, int EndIdx, KLineData src[], KLineData& dest)
 	strcpy_s(dest.Code, src[EndIdx].Code);
 	dest.Date = src[EndIdx].Date;
 	dest.Time = src[EndIdx].Time;      //本时间段内，最后一分钟当中的最后一个数据的时间
-	dest.TimeStatus = (TimeStatus)(EndIdx - StartIdx + 1);
+	dest.TimeStat = (TimeStatus)(EndIdx - StartIdx + 1);
 	dest.PreClose = src[StartIdx].PreClose;
 	dest.Open = src[StartIdx].Open;
 	dest.Close = src[EndIdx].Close;
@@ -120,7 +120,7 @@ int KLineData2String(KLineData src, std::string& dest)
 
 	m_Document.AddMember("Date", src.Date, m_Allocator);
 	m_Document.AddMember("Time", src.Date, m_Allocator);
-	m_Document.AddMember("TimeStatus", (int)src.TimeStatus, m_Allocator);
+	m_Document.AddMember("TimeStatus", (int)src.TimeStat, m_Allocator);
 	m_Document.AddMember("PreClose", src.PreClose, m_Allocator);
 	m_Document.AddMember("Open", src.Open, m_Allocator);
 	m_Document.AddMember("Close", src.Close, m_Allocator);

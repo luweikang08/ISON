@@ -6,7 +6,7 @@ using namespace std;
 const string g_str_connid = "con1";
 const string g_str_endpoint = "tcp://127.0.0.1:7799";
 //const char * g_str_filepath = "result.txt";
-const char*  g_str_subendpoint = "tcp://192.168.15.200:7799";
+string  g_str_subendpoint = "tcp://192.168.15.200:7799";
 const char*  g_str_subid = "sub1";
 
 const char*  g_str_pubendpoint = "tcp://127.0.0.1:1212";
@@ -50,11 +50,11 @@ public:
 		outFile << "stop time:" << g_time.wYear << g_time.wMonth << g_time.wDay << " " << g_time.wHour + 8 << g_time.wMinute << g_time.wSecond << " " << g_time.wMilliseconds << endl;
 		switch (s)
 		{
-		case 10:
+		case 12:parsesbe(smss);
+			break;
 		default:
 			break;
 		}
-		parsesbe(smss);
 		outFile.close();
 		return 0;
 	}
@@ -77,31 +77,43 @@ int main(int argc, char* argv[]) {
 	outFile.open(m_str_FilePath, ios::app);
 
 	stage.Bind("tcp://*:7711");
-	cout << "1)192.168.15.200:7799,2)192.168.15.200:7788,3)127.0.0.1:1212,\n4)192.168.15.200:2010,5)192.168.15.200:2012,6)tcp://192.166.1.204:2010,7)tcp://192.166.1.204:2012\nselect addr:";
+	cout << "Endpoint:(1)192.168.15.200,(2)tcp://192.166.1.204,(3)tcp://127.0.0.1\n---select addr:";
 	cin >> s;
 	switch (s)
 	{
-	case 7:g_str_subendpoint = "tcp://192.166.1.204:2012"; //(g_str_subid, "tcp://192.168.15.200:7788");
+	case 3:g_str_subendpoint = "tcp://127.0.0.1:";
 		break;
-	case 6:g_str_subendpoint = "tcp://192.166.1.204:2010"; //(g_str_subid, "tcp://192.168.15.200:7788");
-		break;
-	case 5:g_str_subendpoint = "tcp://192.168.15.200:2012"; //(g_str_subid, "tcp://192.168.15.200:7788");
-		break;
-	case 4:g_str_subendpoint = "tcp://192.168.15.200:2010"; //(g_str_subid, "tcp://192.168.15.200:7788");
-		break;
-	case 3:g_str_subendpoint = "tcp://127.0.0.1:1212";;
-		break;
-	case 2:g_str_subendpoint = "tcp://192.168.15.200:7788"; //(g_str_subid, "tcp://192.168.15.200:7788");
+	case 2:g_str_subendpoint = "tcp://192.166.1.204:"; //(g_str_subid, "tcp://192.168.15.200:7788");
 		break;
 	case 1:
-	default:g_str_subendpoint = "tcp://192.168.15.200:7799";
+	default:g_str_subendpoint = "tcp://192.168.15.200:";
 		break;
 	}
-	s = -1;
-	cout << "1)83,2)600446,3)88,4)1002,5)1004,6)1102,7)1104,8)1012,9)1014,10)1112,11)1114,12)2011\nselect topic:";
+
+	cout << "Port:(1)2010,(2)2012,(3)1212,(4)7799,(5)7788\n---select port:";
 	cin >> s;
 	switch (s)
 	{
+	case 5:g_str_subendpoint.append("7788");
+		break;
+	case 4:g_str_subendpoint.append("7799");
+		break;
+	case 3:g_str_subendpoint.append("1212");
+		break;
+	case 2:g_str_subendpoint.append("2012");
+		break;
+	case 1:g_str_subendpoint.append("2010");
+	default:
+		break;
+	}
+
+	s = -1;
+	cout << "1)83,2)600446,3)88,4)1002,5)1004,6)1102,7)1104,8)1012,9)1014,10)1112,11)1114,12)2011,13)2111\n---select topic:";
+	cin >> s;
+	switch (s)
+	{
+	case 13:g_str_topic = "2111";
+		break;
 	case 12:g_str_topic = "2011";
 		break;
 	case 11:g_str_topic = "1114";

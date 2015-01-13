@@ -48,6 +48,11 @@ int parsesbe(std::string src)
 {
 	char recvBuf[256];
 	memcpy(recvBuf, src.c_str(), src.size());
+	TOPICHEAD* m_topichead_rec;
+	m_topichead_rec = (TOPICHEAD*)recvBuf;
+
+	std::cout << "topic:" << m_topichead_rec->topic;
+
 	baseline::SDS_Signal CC;
 	baseline::MessageHeader hdr;
 	int messageHeaderVersion = 0;

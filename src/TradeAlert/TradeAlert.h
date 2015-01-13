@@ -29,13 +29,13 @@
 #define volum_limit_level1 10000
 #define turnover_limit_level1 1000000
 
-#define  ALERT_VERSION      "V0.00.02"
-#define  ALERT_RELEASEDATE  "2015/01/10"
+#define  ALERT_VERSION      "V0.00.03"
+#define  ALERT_RELEASEDATE  "2015/01/13"
 #define  ALERT_LOGLEVEL     "1"
-#define  ALERT_SUBTOPIC     "1014"
+#define  ALERT_SUBTOPIC     "1014,1114"
 #define  ALERT_SUBENDPOINT  "tcp://192.168.15.200:2010"
-#define  ALERT_PUBTOPIC     "2011"
-#define  ALERT_PUBENDPOINT  "tcp://192.166.1.41:2010"
+#define  ALERT_PUBTOPIC     "2011,2111"
+#define  ALERT_PUBENDPOINT  "tcp://192.168.15.200:2012"
 
 #define CONFIG_KEY_VECTOR_DEFAULT \
 { "version", "releasedate", "loglevel", "subtopic", "subendpoint", "pubtopic", "pubendpoint", \

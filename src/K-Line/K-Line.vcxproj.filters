@@ -33,6 +33,12 @@
     <ClCompile Include="..\include\klinehelper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\include\readconfig.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\stringhelper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="K-Line.h">

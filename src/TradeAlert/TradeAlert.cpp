@@ -12,16 +12,16 @@ const char* g_clog_dir = "TALog";
 
 char g_str_version[10] = ALERT_VERSION;
 char g_str_releasedate[12] = ALERT_RELEASEDATE;
-char g_str_subtopic[12] = ALERT_SUBTOPIC;
+char g_str_subtopic[24] = ALERT_SUBTOPIC;       //topic, ex:1014,1114
 char g_str_subendpoint[30] = ALERT_SUBENDPOINT;
-char g_str_pubtopic[12] = ALERT_PUBTOPIC;
+char g_str_pubtopic[24] = ALERT_PUBTOPIC;       //topic, ex:2011,2111
 char g_str_pubendpoint[30] = ALERT_PUBENDPOINT;
 
 char* g_str_filepath = JSON_FILE_DEFAULT;
 char* g_str_configkey[] = CONFIG_KEY_VECTOR_DEFAULT;
 const char* g_str_configvalue[] = { ALERT_VERSION, ALERT_RELEASEDATE, ALERT_LOGLEVEL, ALERT_SUBTOPIC, ALERT_SUBENDPOINT, ALERT_PUBTOPIC, ALERT_PUBENDPOINT };
 
-int g_num_loglevel = 0;
+int g_num_loglevel = atoi(ALERT_LOGLEVEL);
 int g_num_volum_limit = volum_limit_level1;
 int g_num_turnover_limit = turnover_limit_level1;
 int g_num_extra_sell_volum_limit = volum_limit_level1;
@@ -31,7 +31,8 @@ int g_num_extra_buy_turnover_limit = turnover_limit_level1;
 
 unsigned g_num_ms;
 unsigned g_num_tm;
-unsigned g_num_sn;
+unsigned g_num_SH_sn;
+unsigned g_num_SZ_sn;
 
 FILE* g_file;
 vector<string> g_vector_configkey = CONFIG_KEY_VECTOR_DEFAULT;
@@ -44,8 +45,23 @@ public:
 	ProcActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
-		//if (g_str_subtopic[5])
-		Subscribe(g_str_subid, g_str_subtopic);
+		int m_num_position = 0;
+
+		string m_str_subtopic_all;
+		string m_str_subtopic_single;
+		m_str_subtopic_all.append(g_str_subtopic);
+
+		m_str_subtopic_single = m_str_subtopic_all.substr(m_num_position, 4);    //sub first topic
+		Subscribe(g_str_subid, m_str_subtopic_single);
+		while ((m_num_position = m_str_subtopic_all.find_first_of(",", m_num_position)) != string::npos) //if "," is exist,sub follows topic
+		{
+			m_num_position++;
+			m_str_subtopic_single = m_str_subtopic_all.substr(m_num_position, 4);
+			if (m_str_subtopic_single.length()==4)
+			{
+				Subscribe(g_str_subid, m_str_subtopic_single);
+			}	
+		}
 		cout << "Actor start ok" << endl;
 		LOG(INFO) << "Actor start ok";
 		return 0;
@@ -57,11 +73,16 @@ public:
 			LOG_IF(INFO, g_num_loglevel > 6) << "Data receive.";
 			cout << ".";
 			string smss = e.message();
+			string m_pubtopic_all;
+			string m_pubtopic_single;
+			int m_num_sn;
+			
+			m_pubtopic_all.append(g_str_pubtopic);
 
 			char recvBuf[1024];
 			memcpy(recvBuf, smss.c_str(), smss.size());
-			/*TOPICHEAD  * A;
-			A = (TOPICHEAD*)recvBuf;*/
+			TOPICHEAD  * m_topichead_rec;
+			m_topichead_rec = (TOPICHEAD*)recvBuf;
 
 			baseline::SDS_Transaction  CC;
 			baseline::MessageHeader hdr;
@@ -70,6 +91,16 @@ public:
 			CC.wrapForDecode(recvBuf, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), 1024);
 
 			sbe2struct(CC, g_TranData); //store data to struct
+			if (g_TranData.Code[8] == 'Z' || g_TranData.Code[8] == 'z')  //shenzhen stock
+			{
+				m_pubtopic_single = m_pubtopic_all.substr(0, 4);
+				m_num_sn = g_num_SZ_sn;
+			}
+			else       //shanghai stock and others
+			{
+				m_pubtopic_single = m_pubtopic_all.substr(5, 4);
+				m_num_sn = g_num_SH_sn;
+			}
 
 			baseline::MessageHeader hdr_send;
 			baseline::SDS_Signal Signal;
@@ -79,11 +110,12 @@ public:
 				//printf("volum warning:%d\n", g_TranData.Volum);
 				LOG_IF(INFO, g_num_loglevel > 5) << "volum warning:" << g_TranData.Volum;
 				TOPICHEAD m_TopicHeadSend;
-				m_TopicHeadSend.topic = atoi(ALERT_PUBTOPIC);
+
+				m_TopicHeadSend.topic = atoi(m_pubtopic_single.c_str());
 				DateAndTime m_dtm=GetDateAndTime();
 				m_TopicHeadSend.ms = (m_dtm.time % 1000);
 				m_TopicHeadSend.kw = atoi(g_TranData.Code);
-				m_TopicHeadSend.sn = g_num_sn;
+				m_TopicHeadSend.sn = m_num_sn;
 				DateTime2Second(m_dtm.date, m_dtm.time, g_num_tm);
 				m_TopicHeadSend.tm = g_num_tm;
 				memcpy(sendBuf, &m_TopicHeadSend, sizeof(TOPICHEAD));
@@ -103,9 +135,16 @@ public:
 				Signal.putInfo(info.c_str());
 
 				string m_str_SendMess(sendBuf, 256);//sizeof(TOPICHEAD) + sizeof(baseline::MessageHeader) + sizeof(baseline::SDS_Signal));
-				Publish(g_str_pubid, g_str_pubtopic, m_str_SendMess);
-				LOG_IF(INFO, g_num_loglevel > 5) << "sn:" << g_num_sn << " publish success.";
-				g_num_sn++;
+				Publish(g_str_pubid, m_pubtopic_single, m_str_SendMess);
+				LOG_IF(INFO, g_num_loglevel > 5) << "topic:" << m_pubtopic_single << "  sn:" << g_num_SH_sn << " publish success.";
+				if (g_TranData.Code[8] == 'Z' || g_TranData.Code[8] == 'z')  //shenzhen stock
+				{
+					g_num_SZ_sn++;
+				}
+				else       //shanghai stock and others
+				{
+					g_num_SH_sn++;
+				}
 			}
 			//if (g_TranData.Turnover >= g_num_turnover_limit)     //large buy and sell with turnover
 			//{
@@ -150,8 +189,6 @@ int main(int argc, char* argv[])
 		strcpy_s(m_jsonFileName, argv[1]);
 	}
 
-	//std::vector<string> configkey = CONFIG_KEY_VECTOR_DEFAULT;
-	//std::map<string, string> configmap;
 	string m_str_appname;
 	GetAppName(argv[0], m_str_appname);
 	RF_RetCode m_rf_retcode = readjsonfile(m_jsonFileName, m_str_appname.c_str(), g_vector_configkey, g_map_configmap);
@@ -231,15 +268,16 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	SnInit(g_num_sn);
+	SnInit(g_num_SH_sn);
+	SnInit(g_num_SZ_sn);
 
 	Context ctx;
 	Stage stage(ctx);
 
 	stage.AddSubscriber(g_str_subid, g_str_subendpoint);
 	stage.AddPublisher(g_str_pubid, g_str_pubendpoint);
-	ActorPtr aProcActor(new ProcActor("proc"));
-	stage.AddActor(aProcActor);
+	ActorPtr Proc_Actor(new ProcActor("proc"));
+	stage.AddActor(Proc_Actor);
 	stage.Start();
 	stage.Join();
 	return 0;

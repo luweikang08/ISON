@@ -57,7 +57,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\include;$(ProjectDir)..\..\src\sdspubinclude;$(SolutionDir)rapidjson\include\rapidjson;$(SolutionDir)ibcpp\include\glog\src\windows;$(SolutionDir)ibcpp\include\ibcpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\sdssbe;$(ProjectDir)..\..\src\include;$(ProjectDir)..\..\src\sdspubinclude;$(SolutionDir)rapidjson\include\rapidjson;$(SolutionDir)ibcpp\include\glog\src\windows;$(SolutionDir)ibcpp\include\ibcpp</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -76,7 +76,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src\include;$(ProjectDir)..\..\src\sdspubinclude;$(SolutionDir)rapidjson\include\rapidjson;$(SolutionDir)ibcpp\include\glog\src\windows;$(SolutionDir)ibcpp\include\ibcpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\sdssbe;$(ProjectDir)..\..\src\include;$(ProjectDir)..\..\src\sdspubinclude;$(SolutionDir)rapidjson\include\rapidjson;$(SolutionDir)ibcpp\include\glog\src\windows;$(SolutionDir)ibcpp\include\ibcpp</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -89,6 +89,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\include\klinehelper.cpp" />
+    <ClCompile Include="..\include\readconfig.cpp" />
+    <ClCompile Include="..\include\stringhelper.cpp" />
     <ClCompile Include="..\sdspubcpp\filehelper.cpp" />
     <ClCompile Include="..\sdspubcpp\isonutil.cpp" />
     <ClCompile Include="..\sdspubcpp\jsonhelper.cpp" />

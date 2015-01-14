@@ -28,6 +28,7 @@ public:
 	ReplyActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
+		cout << "endpoint:" << g_str_subendpoint << " topic:" << g_str_topic << endl;
 		Subscribe(g_str_subid, g_str_topic);
 		GetSystemTime(&g_time);
 		outFile <<"start time:"<< g_time.wYear << g_time.wMonth << g_time.wDay << " " << g_time.wHour + 8 << g_time.wMinute << g_time.wSecond << " " << g_time.wMilliseconds << endl;
@@ -77,13 +78,15 @@ int main(int argc, char* argv[]) {
 	outFile.open(m_str_FilePath, ios::app);
 
 	stage.Bind("tcp://*:7711");
-	cout << "Endpoint:(1)192.168.15.200,(2)tcp://192.166.1.204,(3)tcp://127.0.0.1\n---select addr:";
+	cout << "Endpoint:(1)192.168.15.200,(2)tcp://192.166.1.203,(3)tcp://192.166.1.204,(4)tcp://127.0.0.1\n---select addr:";
 	cin >> s;
 	switch (s)
 	{
-	case 3:g_str_subendpoint = "tcp://127.0.0.1:";
+	case 4:g_str_subendpoint = "tcp://127.0.0.1:";
 		break;
-	case 2:g_str_subendpoint = "tcp://192.166.1.204:"; //(g_str_subid, "tcp://192.168.15.200:7788");
+	case 3:g_str_subendpoint = "tcp://192.166.1.204:"; //(g_str_subid, "tcp://192.168.15.200:7788");
+		break;
+	case 2:g_str_subendpoint = "tcp://192.166.1.203:"; //(g_str_subid, "tcp://192.168.15.200:7788");
 		break;
 	case 1:
 	default:g_str_subendpoint = "tcp://192.168.15.200:";

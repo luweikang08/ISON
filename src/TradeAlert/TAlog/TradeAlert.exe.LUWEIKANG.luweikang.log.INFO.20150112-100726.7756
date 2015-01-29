@@ -1,4 +1,0 @@
-Log file created at: 2015/01/12 10:07:26
-Running on machine: LUWEIKANG
-Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
-I0112 10:07:26.729115  7384 TradeAlert.cpp:160] config.json:read success.

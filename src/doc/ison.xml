@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sbe:messageSchema xmlns:sbe="http://www.fixprotocol.org/ns/simple/1.0"
+ 			 package="baseline"
+                         id="1"
+                         version="0"
+                         semanticVersion="5.2"
+                         description="Code generation unit test support"
+                         byteOrder="littleEndian">
+
+<types>
+        <composite name="messageHeader" description="Message identifiers and length of message root">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="templateId" primitiveType="uint16"/>
+            <type name="schemaId" primitiveType="uint16"/>
+            <type name="version" primitiveType="uint16"/>
+        </composite>
+        <composite name="groupSizeEncoding" description="Repeating group dimensions">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="numInGroup" primitiveType="uint8"/>
+        </composite>
+        <composite name="varDataEncoding">
+            <type name="length" primitiveType="uint8"/>
+            <type name="varData" primitiveType="uint8" length="0" characterEncoding="UTF-8"/>
+        </composite>
+</types>
+
+<types> 
+	<type name="CodeType" primitiveType="char" length="16"/>
+	<type name="AskPriceType" primitiveType="uint32" length="10"/>
+	<type name="AskVolType" primitiveType="uint32" length="10"/>
+	<type name="BidPriceType" primitiveType="uint32" length="10"/>
+	<type name="BidVolType" primitiveType="uint32" length="10"/>
+	<type name="ABVolumeType" primitiveType="uint32" length="50"/>
+	<type name="ENNameType" primitiveType="char" length="32"/>
+	<type name="CNNameType" primitiveType="char" length="32"/>
+	<type name="MarketType" primitiveType="char" length="6"/>
+</types>
+
+<sbe:message name="SDS_Level2" id="1" description="Description of a basic Car">
+        <field name="Seqno" id="1" type="uint32"/>
+        <field name="Code" id="2" type="CodeType"/>
+        <field name="Date" id="3" type="uint32"/>
+        <field name="Time" id="4" type="uint32"/>
+        <field name="SDSTime" id="5" type="uint32"/>
+        <field name="Sn" id="6" type="uint32"/>
+        <field name="PreClose" id="7" type="uint32"/>
+        <field name="Open" id="8" type="uint32"/>
+        <field name="High" id="9" type="uint32"/>
+        <field name="Low" id="10" type="uint32"/>
+       	<field name="Price" id="11" type="uint32"/>
+       	<field name="NumTrades" id="12" type="uint32"/>
+       	
+       	<field name="Volume" id="13" type="uint64"/>
+       	<field name="Turnover" id="14" type="uint64"/>
+       	<field name="TotalBidVol" id="15" type="uint64"/>
+       	<field name="TotalAskVol" id="16" type="uint64"/>
+       	<field name="AvgBidPrice" id="17" type="uint32"/>
+       	<field name="AvgAskPrice" id="18" type="uint32"/>
+       	<field name="HighLimited" id="19" type="uint32"/>
+       	<field name="LowLimited" id="20" type="uint32"/>
+       	
+       	<field name="AskPrice" id="21" type="AskPriceType"/>
+       	<field name="AskVol" id="22" type="AskVolType"/>
+       	<field name="BidPrice" id="23" type="BidPriceType"/>
+       	<field name="BidVol" id="24" type="BidVolType"/>     	        
+</sbe:message>
+
+<sbe:message name="SDS_Transaction" id="2" description="Description of a basic Car">
+        <field name="Seqno" id="1" type="uint32"/>
+        <field name="Code" id="2" type="CodeType"/>
+        <field name="Date" id="3" type="uint32"/>
+        <field name="Time" id="4" type="uint32"/>
+        <field name="SDSTime" id="5" type="uint32"/>
+        <field name="Sn" id="6" type="uint32"/>
+        <field name="Index" id="7" type="uint32"/>
+        <field name="Price" id="8" type="uint32"/>
+        <field name="Volume" id="9" type="uint32"/>
+        <field name="Turnover" id="10" type="uint32"/>
+       	<field name="BSFlag" id="11" type="char"/>
+       	<field name="OrderKind" id="12" type="char"/>
+       	<field name="FunctionCode" id="13" type="uint32"/>
+       	<field name="AskOrder" id="14" type="uint32"/>
+       	<field name="BidOrder" id="15" type="uint32"/> 	        
+</sbe:message>
+
+<sbe:message name="SDS_Order" id="3" description="Description of a basic Car">
+        <field name="Seqno" id="1" type="uint32"/>
+        <field name="Code" id="2" type="CodeType"/>
+        <field name="Date" id="3" type="uint32"/>
+        <field name="Time" id="4" type="uint32"/>
+        <field name="SDSTime" id="5" type="uint32"/>
+        <field name="Sn" id="6" type="uint32"/>
+        <field name="Order" id="7" type="uint32"/>
+        <field name="Price" id="8" type="uint32"/>
+        <field name="Volume" id="9" type="uint32"/>  
+       	<field name="OrderKind" id="10" type="char"/>
+       	<field name="FunctionCode" id="11" type="char"/>	        
+</sbe:message>
+
+<sbe:message name="SDS_OderQueen" id="4" description="Description of a basic Car">
+        <field name="Seqno" id="1" type="uint32"/>
+        <field name="Code" id="2" type="CodeType"/>
+        <field name="Date" id="3" type="uint32"/>
+        <field name="Time" id="4" type="uint32"/>
+        <field name="SDSTime" id="5" type="uint32"/>
+        <field name="Sn" id="6" type="uint32"/>
+        <field name="Side" id="7" type="char"/>
+        <field name="Price" id="8" type="uint32"/>
+        <field name="Orders" id="9" type="uint32"/>
+        <field name="ABItems" id="10" type="uint32"/>
+       	<field name="ABVolume" id="11" type="ABVolumeType"/>      
+</sbe:message>
+
+<sbe:message name="SDS_Code" id="5" description="Description of a basic Car">
+        <field name="Seqno" id="1" type="uint32"/>
+        <field name="Code" id="2" type="CodeType"/>
+        <field name="ENName" id="3" type="ENNameType"/>
+        <field name="CNName" id="4" type="CNNameType"/>
+        <field name="Type" id="5" type="uint32"/>
+ </sbe:message>
+
+<sbe:message name="SDS_CloseMarket" id="6" description="Description of a basic Car">
+        <field name="Seqno" id="1" type="uint32"/>
+        <field name="Time" id="2" type="uint32"/>
+        <field name="Market" id="3" type="MarketType"/>    
+</sbe:message>
+
+<sbe:message name="TOPICHEAD" id="7" description="TOPICHEAD">
+	<field name="topic" id="1" type="uint16"/>
+	<field name="ms" id="2" type="uint16"/>
+	<field name="kw" id="3" type="uint32"/>
+	<field name="sn" id="4" type="uint32"/>
+	<field name="tm" id="5" type="uint32"/>
+</sbe:message>
+
+</sbe:messageSchema>
+
+
+
+
+
+	

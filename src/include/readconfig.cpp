@@ -54,7 +54,7 @@ int readjsonfile(const char* filename, std::vector <std::string> configkey, std:
 *filename : (in)config file name in json format,ex:XXX.json,
 *masterkey : (in)key of destination block,typical is application name,ex:argv[0]
 *configkey : (in)destination key of block belongs to masterkey
-configmap : (out)map of result
+*configmap : (out)map of result
 */
 RF_RetCode readjsonfile(const char* filename, const char* masterkey, std::vector <std::string> configkey, std::map<std::string, std::string> &configmap)
 {
@@ -93,6 +93,12 @@ RF_RetCode readjsonfile(const char* filename, const char* masterkey, std::vector
 						{
 							configmap[key] = itostring(body[key.c_str()].GetInt());
 						}
+						if (body[key.c_str()].IsDouble())
+						{
+							stringstream ss;
+							ss << body[key.c_str()].GetDouble();
+							configmap[key] = ss.str();
+						}
 					}
 					is.close();
 					return RF_SUCCESS;
@@ -117,4 +123,45 @@ RF_RetCode readjsonfile(const char* filename, const char* masterkey, std::vector
 		return RF_FILE_NOT_EXIST;
 	}
 	return RF_FAIL;
+}
+/*
+*create json config file contains setting infomation
+*filename : (in)config file name in json format,ex:XXX.json,
+*masterkey : (in)key of destination block,typical is application name,ex:argv[0]
+*configkey : (in)destination key of block belongs to masterkey
+*configvalue : (in)destination value of block belongs to masterkey
+*/
+RF_RetCode createjsonfile(const char* filename, const char* masterkey, std::vector <std::string> configkey, std::vector <std::string> configvalue)
+{
+	try{
+		ofstream ofs;
+		ofs.open(filename, ofstream::out);
+
+		rapidjson::Document m_Document;
+		m_Document.SetObject();
+		rapidjson::Document::AllocatorType& m_Allocator = m_Document.GetAllocator();
+
+		rapidjson::Value m_Value_ALERT;
+		m_Value_ALERT.SetObject();
+
+		for (unsigned int i = 0; i < (configkey.size()); i++)// add string to json
+		{
+			m_Value_ALERT.AddMember(configkey[i].c_str(), configvalue[i].c_str(), m_Allocator);
+		}
+
+		m_Document.AddMember(masterkey, m_Value_ALERT, m_Allocator);
+		typedef rapidjson::GenericStringBuffer<rapidjson::UTF8<>, rapidjson::MemoryPoolAllocator<>> StringBuffer;
+		StringBuffer buf(&m_Allocator);
+		rapidjson::Writer<StringBuffer> writer(buf);
+		m_Document.Accept(writer);
+		std::string json(buf.GetString(), buf.Size());
+
+		ofs << json;
+		ofs.close();
+		return RF_SUCCESS;
+	}
+	catch (exception ex)
+	{
+		return RF_FAIL;
+	}
 }

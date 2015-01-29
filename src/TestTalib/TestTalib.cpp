@@ -2,6 +2,7 @@
 
 #include "ta_common.h"
 #include "ta_func.h"
+#include <time.h>
 
 using namespace std;
 
@@ -35,6 +36,10 @@ TA_Real    g_num_MaOutReal[240];
 
 int main(int argc, char* argv[])
 {
+	string str = "123456789012345678901234567890";
+	cout << sizeof(double) << " " << str.size() << " " << strlen(str.c_str());
+	system("pause");
+
 	//TA_EMA(0, 50, &OpenPrice[0], 26, &outBeg, &outNbElement, &out[0]);
 	TA_MACD(0, 50, &OpenPrice[0], 12, 26, 9, &outBeg, &outNbElement, &outMACD[0], &outMACDSignal[0], &outMACDHist[0]);
 	for (int i = 0; i < 51; i++)

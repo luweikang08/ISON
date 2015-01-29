@@ -15,6 +15,7 @@ void split(const std::string& s, const std::string& delim, std::vector< std::str
 		ret->push_back(s.substr(last, index - last));
 	}
 }
+
 int StrInsertChar(string in, int offset, char *out)
 {
 	for (int i = 0; i < in.length(); i++)

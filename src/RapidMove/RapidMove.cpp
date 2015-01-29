@@ -18,8 +18,8 @@ char* g_str_configkey[] = CONFIG_KEY_VECTOR_DEFAULT;
 const char* g_str_configvalue[] = { MOVE_VERSION, MOVE_RELEASEDATE, MOVE_LOGLEVEL, MOVE_SUBTOPIC, MOVE_SUBENDPOINT, MOVE_PUBTOPIC, MOVE_PUBENDPOINT };
 
 int g_num_loglevel = atoi(MOVE_LOGLEVEL);
-double g_num_riselimit = 1.8;
-double g_num_falllimit = 1.8;
+double g_num_riselimit = MOVE_RISELIMIT;
+double g_num_falllimit = MOVE_FALLLIMIT;
 
 unsigned g_num_ms;
 unsigned g_num_tm;
@@ -28,9 +28,9 @@ unsigned g_num_SZ_sn;
 
 vector<string> g_vector_configkey = CONFIG_KEY_VECTOR_DEFAULT;
 map<string, string> g_map_configmap;    //config file data
-map<string, map<int,int>> g_map_data;   //<code,<time,price>>
+map<string, string> g_map_KlineDataOne; //<code,sbebuf>
 
-TranData g_TranData;
+//TranData g_TranData;
 
 class ProcActor : public Actor {
 public:
@@ -68,22 +68,30 @@ public:
 			string m_pubtopic_all;
 			string m_pubtopic_single;
 			int m_num_sn;
+			int m_num_signalid;
 
 			m_pubtopic_all.append(g_str_pubtopic);
 
-			char recvBuf[1024];
+			char recvBuf[512];
 			memcpy(recvBuf, smss.c_str(), smss.size());
 			TOPICHEAD  * m_topichead_rec;
 			m_topichead_rec = (TOPICHEAD*)recvBuf;
 
-			baseline::SDS_Transaction  CC;
+			baseline::SDS_Kline  KK;
 			baseline::MessageHeader hdr;
 			int messageHeaderVersion = 0;
-			hdr.wrap(recvBuf + sizeof(TOPICHEAD), 0, messageHeaderVersion, 1024);//parse messageheader
-			CC.wrapForDecode(recvBuf, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), 1024);
+			hdr.wrap(recvBuf + sizeof(TOPICHEAD), 0, messageHeaderVersion, 512);//parse messageheader
+			KK.wrapForDecode(recvBuf, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), 512);
 
-			sbe2struct(CC, g_TranData); //store data to struct
-			if (g_TranData.Code[8] == 'Z' || g_TranData.Code[8] == 'z')  //shenzhen stock
+			//sbe2struct(KK, g_TranData); //store data to struct
+			char m_ch_Code[16];
+			memcpy(m_ch_Code, KK.code(), 16);
+			if ((m_ch_Code[0] != '0') && (m_ch_Code[0] != '3') && (m_ch_Code[0] != '6'))
+			{
+				LOG_IF(INFO, g_num_loglevel > 6) << "stockid is not 0* 3* 6*.";
+				return -1;
+			}
+			if (m_ch_Code[8] == 'Z' || m_ch_Code[8] == 'z')  //shenzhen stock
 			{
 				m_pubtopic_single = m_pubtopic_all.substr(0, 4);
 				m_num_sn = g_num_SZ_sn;
@@ -93,17 +101,78 @@ public:
 				m_pubtopic_single = m_pubtopic_all.substr(5, 4);
 				m_num_sn = g_num_SH_sn;
 			}
-			map<string, map<int,int>>::iterator it = g_map_data.find(g_TranData.Code); //find curent stock is exist in map or not
-			map<int, int> m_map;
-			if (it == g_map_data.end())
+
+			map<string, string>::iterator it = g_map_KlineDataOne.find(KK.code()); //find curent stock is exist in map or not
+			string m_str_Store(recvBuf + sizeof(TOPICHEAD), hdr.size() + KK.sbeBlockLength());
+			if (it == g_map_KlineDataOne.end())
 			{
-				string m_str_code(g_TranData.Code, 16);
-				m_map.insert(pair<int, int>(g_TranData.Time, g_TranData.Price));
-				g_map_data.insert(pair<string, map<int, int>>(m_str_code, m_map));
+				g_map_KlineDataOne.insert(pair<string, string>(KK.code(), m_str_Store));
 			}
 			else
 			{
-				m_map = it->second;
+				char readBuf[512];
+				std::memcpy(readBuf, it->second.c_str(), hdr.size() + KK.sbeBlockLength());
+
+				baseline::MessageHeader hdr_read;
+				baseline::SDS_Kline KK_read;
+				hdr_read.wrap(readBuf, 0, messageHeaderVersion, 512);
+				KK_read.wrapForDecode(readBuf, hdr_read.size(), KK_read.sbeBlockLength(), hdr.version(), 512);
+				float temp = volat(KK_read.preClose(), KK.close());
+				if (temp >= g_num_riselimit)
+				{
+					m_num_signalid = RISE_SIGNALID;
+				}
+				else if (temp <= (0 - g_num_falllimit))
+				{
+					m_num_signalid = FALL_SIGNALID;
+				}
+				else
+				{
+					return -1;
+				}
+				cout << "code:" << KK_read.code() << " " << KK.code() << "preclose:" << KK_read.preClose() << " close:" << KK.close();
+
+				char sendBuf[256];
+				TOPICHEAD m_TopicHeadSend;
+				baseline::MessageHeader hdr_send;
+				baseline::SDS_Signal signal_send;
+
+				m_TopicHeadSend.topic = atoi(m_pubtopic_single.c_str());
+				DateAndTime m_dtm = GetDateAndTime();
+				m_TopicHeadSend.ms = (m_dtm.time % 1000);
+				m_TopicHeadSend.kw = atoi(KK.code());
+				m_TopicHeadSend.sn = m_num_sn;
+				DateTime2Second(m_dtm.date, m_dtm.time, g_num_tm);
+				m_TopicHeadSend.tm = g_num_tm;
+				memcpy(sendBuf, &m_TopicHeadSend, sizeof(TOPICHEAD));
+
+				hdr_send.wrap(sendBuf, sizeof(TOPICHEAD), 0, 256)                          //wrap messageheader
+					.blockLength(baseline::SDS_Signal::sbeBlockLength())
+					.templateId(baseline::SDS_Signal::sbeTemplateId())
+					.schemaId(baseline::SDS_Signal::sbeSchemaId())
+					.version(baseline::SDS_Signal::sbeSchemaVersion());
+				signal_send.wrapForEncode(sendBuf, hdr.size() + sizeof(TOPICHEAD), 256);       //wrap data
+				signal_send.signalID(m_num_signalid);
+				signal_send.putCode(KK.code());
+				signal_send.date(KK.date());
+				signal_send.time(KK.time());
+				string info;
+				makeinfo(temp, info);
+				signal_send.putInfo(info.c_str());
+
+				string m_str_SendMess(sendBuf, sizeof(TOPICHEAD) + hdr_send.size() + signal_send.sbeBlockLength());
+				Publish(g_str_pubid, m_pubtopic_single, m_str_SendMess);
+				cout << "*";
+				LOG_IF(INFO, g_num_loglevel > 5) << "topic:" << m_pubtopic_single << "  sn:" << m_num_sn << "volat case publish success.";
+				if (m_ch_Code[8] == 'Z' || m_ch_Code[8] == 'z')  //shenzhen stock
+				{
+					g_num_SZ_sn++;
+				}
+				else       //shanghai stock and others
+				{
+					g_num_SH_sn++;
+				}
+				g_map_KlineDataOne[it->first] = m_str_Store; //store new data
 			}
 		}
 		return 0;
@@ -142,6 +211,8 @@ int main(int argc, char* argv[])
 			strcpy_s(g_str_subendpoint, g_map_configmap["subendpoint"].c_str());
 			strcpy_s(g_str_pubtopic, g_map_configmap["pubtopic"].c_str());
 			strcpy_s(g_str_pubendpoint, g_map_configmap["pubendpoint"].c_str());
+			g_num_riselimit = atof(g_map_configmap["riselimit"].c_str());
+			g_num_falllimit = atof(g_map_configmap["falllimit"].c_str());
 			cout << "get setting success.";
 		}
 		else

@@ -26,7 +26,7 @@
 
 #define LEVLEL2LENGTH 10
 
-enum TimeStatus  //枚举计算K线的时间长度
+enum TS  //枚举计算K线的时间长度
 {
 	OneMinute = 1,
 	FiveMinute = 5,
@@ -46,7 +46,7 @@ struct KLineData
 	C  Code[16];        //证券代码
 	N4 Date;            //日期
 	N4 Time;            //时间
-	TimeStatus TimeStat;//计算K线的时间长度
+	TS TimeStatus;//计算K线的时间长度
 	N4 PreClose;        //前收盘价
 	N4 Open;            //开盘价
 	N4 Close;           //收盘价

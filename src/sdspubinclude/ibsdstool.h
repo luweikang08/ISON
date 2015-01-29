@@ -70,25 +70,13 @@ inline int iconv_code(const char* tocode, const char* fromcode, const string& in
 	return 0;
 }
 
-//inline void AddMember64(rapidjson::Value &body, rapidjson::Document::AllocatorType& allocator, const char * key, long long vlue){
-	//rapidjson::Value temp;
-	//const char*vuletemp = itostring(vlue).c_str();
-	//temp.SetString(vuletemp, strlen(vuletemp), allocator);
-	////LOG_IF(INFO, g_nlog_level>5) << key << ":" << vuletemp << "\n";
-	//body.AddMember(key, temp, allocator);
-//};
-inline void AddMember64(rapidjson::Value &body, rapidjson::Document::AllocatorType& allocator,
-	const char * key, long long vlue){
-	//rapidjson::Value temp;
-	//stringstream s;
-	//s << vlue;
-	//std::string stemp = s.str();
-	//const char*vuletemp = stemp.c_str();
-	//temp.SetString(vuletemp, strlen(vuletemp), allocator);
-	////LOG_IF(INFO, g_nlog_level>5) << key << ":" << vuletemp << "\n";
-	//body.AddMember(key, temp, allocator);
+inline void AddMember64(rapidjson::Value &body, rapidjson::Document::AllocatorType& allocator, const char * key, long long vlue){
+	rapidjson::Value temp;
+	const char*vuletemp = itostring(vlue).c_str();
+	temp.SetString(vuletemp, strlen(vuletemp), allocator);
+	//LOG_IF(INFO, g_nlog_level>5) << key << ":" << vuletemp << "\n";
+	body.AddMember(key, temp, allocator);
 };
-
 
 
 /*

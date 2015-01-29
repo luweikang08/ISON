@@ -21,12 +21,16 @@
 #define CODELENGTH 16
 #define CODENAMELENGTH 32
 #define MARKETLENGTH 6
+typedef  unsigned short un_short;
+typedef unsigned int un_int;
 
 //系统消息和数据消息的定义
 enum ISON_MSG_ID{
 	SYSMSG = 10,
-	CodeTable = 11,
+	CodeTableMSG = 11,
 	SYSCloseMarket = 12,
+
+	
 	SubscribeMarketData = 21,//订阅行情
 	SubscribeMarketDataResp,//	订阅行情应答
 	UnSubscribeMarketData,	//取消订阅市场行情
@@ -37,6 +41,7 @@ enum ISON_MSG_ID{
 	UnSubscribeSignalResp,//取消订阅信号应答
 	SubscribeIndicator,//订阅指标
 	SubscribeIndicatorResp,//订阅指标应答
+
 	GetMarketInfo = 41,//查询市场信息
 	GetMarketInfoResp,//查询市场信息应答
 	GetStockInfo,//查询股票信息
@@ -47,6 +52,10 @@ enum ISON_MSG_ID{
 	GetIndicatorResp,//查询历史指标应答
 	GetMarketRank,//查询实时排行
 	GetMarketRankResp,//查询实时排行应答
+	GetCodeTable,
+	GetCodeTableResp,
+
+
 	MatchPrice = 81,//成交价格
 	MaketData,//基本行情
 	Level2,//Level2//行情
@@ -55,11 +64,68 @@ enum ISON_MSG_ID{
 	OrderQueue,//委托队列
 	Signal,//信号推送
 	Indicator ,//指标推送
+
 	
 };
+
+//错误码定义
+
+enum SDS_ERR
+{
+
+	SDS_ERR_UNKOWN = 2000,                // 未知错误
+
+	SDS_ERR_INITIALIZE_FAILURE = 2001,  // 初始化环境失败
+	SDS_ERR_NETWORK_ERROR,              // 网络连接出现问题
+	SDS_ERR_INVALID_PARAMS,             // 输入参数无效
+	SDS_ERR_VERIFY_FAILURE,             // 登陆验证失败：原因为用户名或者密码错误；超出登陆数量
+	SDS_ERR_NO_AUTHORIZED_MARKET,       // 所有请求的市场都没有授权
+	SDS_ERR_NO_CODE_TABLE,              // 所有请求的市场该天都没有代码表
+
+	SDS_ERR_SUCCESS = 0,                // 成功
+};
+
+
+/*
+enum ISON_SDS2TGW{
+	TSZ_SYSDATA = 1000,//深圳交易所	SYSDATA	系统数据	
+	TSZ_LEVEL1DATA = 1001,	//深圳交易所	LEVEL1DATA	LEVEL1数据	
+	TSZ_LEVEL2 = 1002,	//深圳交易所	LEVEL2DATA	LEVEL2数据
+	TSZ_ORDERQUEUE = 1003,	//深圳交易所	ORDERQUEUE	订单队列	
+	TSZ_TRANSACTION = 1004,	//深圳交易所	TRANSACTION	逐笔成交	
+
+	TSH_SYSDATA = 1100,	//上海交易所	SYSDATA	系统数据	
+	TSH_LEVEL1DATA = 1101,//上海交易所	LEVEL1DATA	LEVEL1数据	
+	TSH_LEVEL2 = 1102,	//上海交易所	LEVEL2DATA	LEVEL2数据	
+	TSH_ORDERQUEUE = 1103,	//上海交易所	ORDERQUEUE	订单队列	
+	TSH_TRANSACTION = 1104	//上海交易所	TRANSACTION	逐笔成交	
+};*/
+
+enum ISON_SDS2TGW{
+TSZ_SYSDATA = 1010,//深圳交易所	SYSDATA	系统数据
+TSZ_LEVEL1DATA = 1011,	//深圳交易所	LEVEL1DATA	LEVEL1数据
+TSZ_LEVEL2 = 1012,	//深圳交易所	LEVEL2DATA	LEVEL2数据
+TSZ_ORDERQUEUE = 1013,	//深圳交易所	ORDERQUEUE	订单队列
+TSZ_TRANSACTION = 1014,	//深圳交易所	TRANSACTION	逐笔成交
+
+TSH_SYSDATA = 1110,	//上海交易所	SYSDATA	系统数据
+TSH_LEVEL1DATA = 1111,//上海交易所	LEVEL1DATA	LEVEL1数据
+TSH_LEVEL2 = 1112,	//上海交易所	LEVEL2DATA	LEVEL2数据
+TSH_ORDERQUEUE = 1113,	//上海交易所	ORDERQUEUE	订单队列
+TSH_TRANSACTION = 1114	//上海交易所	TRANSACTION	逐笔成交
+};
+
+struct TOPICHEAD{
+	un_short topic; // 主题,见后面列表．
+	un_short ms; // 毫秒0~999
+	un_int kw;  // 证券代码，一般直接用atoi就可以了．
+	un_int sn;  // 序列号,最好连续
+	un_int tm;  // 从１９７１到现在的秒数．
+};
+
 struct SDS_Level2{
 	N4	Seqno;	//消息编号
-	C Code[CODELENGTH];	//证券代码, 如000001.SZ
+	C Code[CODELENGTH];	//证券代码, 如000001.SH
 	N4 Date ;	//,日期YYYYMMDD
 	N4 Time;	//时间HHMMSSmmm
 	N4 SDSTime;//进入SDS的时间 //12.23
@@ -85,7 +151,7 @@ struct SDS_Level2{
 	N4	BidVol[LEVLEL2LENGTH]; //	10档申买量
 };
 struct SDS_Transaction{
-	N4  Seqno;//消息编号	
+	N4  Seqno;//消息编号
 	C Code[CODELENGTH];//证券代码
 	N4 	Date;//日期
 	N4 Time;//时间
@@ -137,9 +203,6 @@ struct SDS_CloseMarket{
 	N4 Time;//闭市时间  SH因为有港股所以16：00闭市
 	C Market[MARKETLENGTH];//闭市市场SZ或者SH
 };
-
-
-
 struct SubscribeMarketDataReq{
 	N4  seqno;     //	消息编号客户指令编号(不能重复)
 	N2	date_type;//	订阅的数据类型
@@ -149,13 +212,9 @@ struct SubscribeMarketDataReq{
 	N4 	end_time;//结束时间	HHMMSSmmm，0为忽略
 	std::vector <std::string> code_table;//证券代码表C…	品种代码表，分号隔开，如000001.SH; 600001.SZ	
 };
-
-struct TOPICHEAD{
-	unsigned short topic; // 主题,见后面列表．
-	unsigned short ms; // 毫秒0~999
-	unsigned int kw;  // 证券代码，一般直接用atoi就可以了．
-	unsigned int sn;  // 序列号,最好连续
-	unsigned int tm;  // 从１９７１到现在的秒数．
+struct SYSTEMDATA{
+	un_short Type;//系统信息类型 12 闭市消息
+	char info[70];//具体信息  用“|”分割数据
 };
 
 #endif

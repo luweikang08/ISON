@@ -1,7 +1,22 @@
                        TradeAlert Utility Update Notic
 	          ==========================================
 -------------------
-V0.00.03 2015/01/12
+V0.00.05 2015/01/22
+-------------------
+	1. Modify:change format of info from json to direct data.
+	2. Modify:separate buy and sell signalid,1/2.
+	3. Add:add auction time alert,signalid is 3. 
+					                                	              luweikang, 2015/01/22
+
+-------------------
+V0.00.04 2015/01/14
+-------------------
+	1. Modify:change default value in #define section.
+	2. Add:add judge from turnover.
+					                                	              luweikang, 2015/01/14
+
+-------------------
+V0.00.03 2015/01/13
 -------------------
 	1. Modify:support Subscribe() multiple topic,can read "subtopic":"1014,1114"
 	2. Modify:judge CC.Code[8] == 'Z',separate from shenzhen and shanghai
@@ -11,10 +26,10 @@ V0.00.03 2015/01/12
 -------------------
 V0.00.02 2015/01/10
 -------------------
-	1. Add loglevel in config.json file.
-	2. Add LOG() and LOG_IF() in program.
-	3. Modify TOPICHEAD section, put data in TOPICHEAD.
-	4. Add UPDATE.TXT file to track.
+	1. Add:add loglevel in config.json file.
+	2. Add:add LOG() and LOG_IF() in program.
+	3. Modify:change TOPICHEAD section, put data in TOPICHEAD.
+	4. Add:add UPDATE.TXT file to track.
 	TradeAlert.cpp TradeAlert.h 
 							                                      luweikang, 2015/01/10
 

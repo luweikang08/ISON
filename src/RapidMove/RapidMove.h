@@ -17,17 +17,18 @@
 #include "isonsdsdataapi.h"
 #include "SDS_Transaction.hpp"
 #include "data_struct.h"
+#include "SDS_Kline.hpp"
+#include "SDS_Signal.hpp"
 
-#define LightCnt 3
-
-#define SIGNALID 2
+#define RISE_SIGNALID 4
+#define FALL_SIGNALID 5
 
 #define  MOVE_VERSION      "V0.00.01"
 #define  MOVE_RELEASEDATE  "2015/01/13"
 #define  MOVE_LOGLEVEL     "1"
-#define  MOVE_SUBTOPIC     "1014,1114"
-#define  MOVE_SUBENDPOINT  "tcp://192.168.15.200:2010"
-#define  MOVE_PUBTOPIC     "2012,2112"
+#define  MOVE_SUBTOPIC     "2012,2112"
+#define  MOVE_SUBENDPOINT  "tcp://192.168.15.200:2012"
+#define  MOVE_PUBTOPIC     "2011,2111"
 #define  MOVE_PUBENDPOINT  "tcp://192.168.15.200:2012"
 #define  MOVE_RISELIMIT    1.8
 #define  MOVE_FALLLIMIT    1.8
@@ -60,5 +61,31 @@ inline void sbe2struct(baseline::SDS_Transaction& src, TranData& dest)
 	dest.AskOrder = src.askOrder();
 	dest.BidOrder = src.bidOrder();
 }
+
+inline float volat(int base, int value)
+{
+	return ((float)((value - base) * 100)) / base;
+}
+
+inline void makeinfo(char rf,float vol, string& dest)
+{
+	rapidjson::Document m_Document;
+	m_Document.SetObject();
+	rapidjson::Document::AllocatorType& m_Allocator = m_Document.GetAllocator();
+
+	rapidjson::Value m_Value_Code;
+	m_Document.AddMember("rfflag", rf, m_Allocator);
+	m_Document.AddMember("volat", vol, m_Allocator);
+	//m_Document.AddMember("turnover", src.turnover(), m_Allocator);
+	dest = Document2String(m_Document);
+}
+
+inline void makeinfo(float & src, string& dest)
+{
+	std::stringstream s;
+	s << src;
+	dest = s.str();
+}
+
 
 #endif

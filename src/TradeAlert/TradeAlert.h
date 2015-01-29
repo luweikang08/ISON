@@ -14,23 +14,26 @@
 #include <time.h>
 
 #include "readconfig.h"
-
-#include "MessageHeader.hpp"
-#include "SDS_Transaction.hpp"
-#include "SDS_Level2.hpp"
-#include "SDS_Signal.hpp"
-#include "isonsdsdataapi.h"
-#include "data_struct.h"
 #include "stringhelper.h"
-#include "timehelper.h"
+#include "data_struct.h"
 
-#define SIGNALID 1
+#include "LargeTranMonitor.h"
 
-#define volum_limit_level1 10000
-#define turnover_limit_level1 1000000
 
-#define  ALERT_VERSION      "V0.00.03"
-#define  ALERT_RELEASEDATE  "2015/01/13"
+#define BUY_SIGNALID      1
+#define SELL_SIGNALID     2
+#define AUCTION_SIGNAID   3
+
+
+#define VOLUM_LIMIT               40000
+#define TURNOVER_LIMIT            1000000
+#define EXTRA_SELL_VOLUM_LIMIT    60000
+#define EXTRA_SELL_TURNOVER_LIMIT 1500000
+#define EXTRA_BUY_VOLUM_LIMIT     60000
+#define EXTRA_BUY_TURNOVER_LIMIT  1500000
+
+#define  ALERT_VERSION      "V0.00.05"
+#define  ALERT_RELEASEDATE  "2015/01/22"
 #define  ALERT_LOGLEVEL     "1"
 #define  ALERT_SUBTOPIC     "1014,1114"
 #define  ALERT_SUBENDPOINT  "tcp://192.168.15.200:2010"
@@ -63,14 +66,9 @@ inline void sbe2struct(baseline::SDS_Transaction& src, TranData& dest)
 
 inline void makeinfo(baseline::SDS_Transaction& src, string& dest)
 {
-	rapidjson::Document m_Document;
-	m_Document.SetObject();
-	rapidjson::Document::AllocatorType& m_Allocator = m_Document.GetAllocator();
-
-	rapidjson::Value m_Value_Code;
-	m_Document.AddMember("bsflag", src.bSFlag(), m_Allocator);
-	m_Document.AddMember("volum", src.volume(), m_Allocator);
-	dest = Document2String(m_Document);
+	std::stringstream s;
+	s << (int)(src.volume()/100);
+	dest = s.str();
 }
 
 #endif

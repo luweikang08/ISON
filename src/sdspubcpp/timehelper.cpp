@@ -75,9 +75,6 @@ void  DateTime2Second(int &date,int &now_time, unsigned int &now_second)
 	now_second = (unsigned int)timep;
 }
 
-
-
-
 void SnInit(unsigned &sn)
 {
 	struct tm when;

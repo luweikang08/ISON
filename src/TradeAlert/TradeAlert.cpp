@@ -20,14 +20,15 @@ char g_str_pubendpoint[30] = ALERT_PUBENDPOINT;
 char* g_str_filepath = JSON_FILE_DEFAULT;
 char* g_str_configkey[] = CONFIG_KEY_VECTOR_DEFAULT;
 const char* g_str_configvalue[] = { ALERT_VERSION, ALERT_RELEASEDATE, ALERT_LOGLEVEL, ALERT_SUBTOPIC, ALERT_SUBENDPOINT, ALERT_PUBTOPIC, ALERT_PUBENDPOINT };
+const int g_num_configvalue[] = { VOLUM_LIMIT, TURNOVER_LIMIT, EXTRA_SELL_VOLUM_LIMIT, EXTRA_SELL_TURNOVER_LIMIT, EXTRA_BUY_VOLUM_LIMIT, EXTRA_BUY_TURNOVER_LIMIT };
 
 int g_num_loglevel = atoi(ALERT_LOGLEVEL);
-int g_num_volum_limit = volum_limit_level1;
-int g_num_turnover_limit = turnover_limit_level1;
-int g_num_extra_sell_volum_limit = volum_limit_level1;
-int g_num_extra_sell_turnover_limit = turnover_limit_level1;
-int g_num_extra_buy_volum_limit = volum_limit_level1;
-int g_num_extra_buy_turnover_limit = turnover_limit_level1;
+int g_num_volum_limit = VOLUM_LIMIT;
+int g_num_turnover_limit = TURNOVER_LIMIT;
+int g_num_extra_sell_volum_limit = EXTRA_SELL_VOLUM_LIMIT;
+int g_num_extra_sell_turnover_limit = EXTRA_SELL_TURNOVER_LIMIT;
+int g_num_extra_buy_volum_limit = EXTRA_BUY_VOLUM_LIMIT;
+int g_num_extra_buy_turnover_limit = EXTRA_BUY_TURNOVER_LIMIT;
 
 unsigned g_num_ms;
 unsigned g_num_tm;
@@ -37,8 +38,7 @@ unsigned g_num_SZ_sn;
 FILE* g_file;
 vector<string> g_vector_configkey = CONFIG_KEY_VECTOR_DEFAULT;
 map<string, string> g_map_configmap;
-
-TranData g_TranData;
+ison::signal::LargeTranMonitor ltm;
 
 class ProcActor : public Actor {
 public:
@@ -71,15 +71,15 @@ public:
 		if (e.type() == kPublish)
 		{
 			LOG_IF(INFO, g_num_loglevel > 6) << "Data receive.";
-			cout << ".";
 			string smss = e.message();
 			string m_pubtopic_all;
 			string m_pubtopic_single;
 			int m_num_sn;
+			char m_ch_code[16];
 			
 			m_pubtopic_all.append(g_str_pubtopic);
 
-			char recvBuf[1024];
+			char recvBuf[256];
 			memcpy(recvBuf, smss.c_str(), smss.size());
 			TOPICHEAD  * m_topichead_rec;
 			m_topichead_rec = (TOPICHEAD*)recvBuf;
@@ -87,11 +87,28 @@ public:
 			baseline::SDS_Transaction  CC;
 			baseline::MessageHeader hdr;
 			int messageHeaderVersion = 0;
-			hdr.wrap(recvBuf + sizeof(TOPICHEAD), 0, messageHeaderVersion, 1024);//parse messageheader
-			CC.wrapForDecode(recvBuf, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), 1024);
+			hdr.wrap(recvBuf + sizeof(TOPICHEAD), 0, messageHeaderVersion, 256);//parse messageheader
+			CC.wrapForDecode(recvBuf, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), 256);
 
-			sbe2struct(CC, g_TranData); //store data to struct
-			if (g_TranData.Code[8] == 'Z' || g_TranData.Code[8] == 'z')  //shenzhen stock
+			LOG_IF(INFO, g_num_loglevel > 6) << "receive data->seqno:" << CC.seqno() << " code:" << m_ch_code << " date:" << CC.date() << " time:" << CC.time()\
+				<< " sdstime:" << CC.sDSTime() << " sn:" << CC.sn() << " index:" << CC.index() << " price:" << CC.price() << " volume:" << CC.volume()\
+				<< " turnover:" << CC.turnover() << " bsflag:" << CC.bSFlag() << " orderkind:" << CC.orderKind() << " functioncode:" << CC.functionCode()\
+				<< " askorder" << CC.askOrder() << " bidorder:" << CC.bidOrder();
+
+			if ((CC.time()<91500000)||(CC.time()>151000000))
+			{
+				LOG_IF(INFO, g_num_loglevel > 5) << "data time is not available.";
+				return -1;
+			}
+
+			//sbe2struct(CC, g_TranData); //store data to struct
+			std::memcpy(m_ch_code, CC.code(), 16);
+			if ((m_ch_code[0] != '0') && (m_ch_code[0] != '3') && (m_ch_code[0] != '6'))
+			{
+				LOG_IF(INFO, g_num_loglevel > 6) << "stockid is not 0* 3* 6*.";
+				return -1;
+			}
+			if (m_ch_code[8] == 'Z' || m_ch_code[8] == 'z')  //shenzhen stock
 			{
 				m_pubtopic_single = m_pubtopic_all.substr(0, 4);
 				m_num_sn = g_num_SZ_sn;
@@ -105,16 +122,15 @@ public:
 			baseline::MessageHeader hdr_send;
 			baseline::SDS_Signal Signal;
 			char sendBuf[256];
-			if (g_TranData.Volum >= g_num_volum_limit)     //large buy and sell with volum
+			if ((CC.volume() >= g_num_volum_limit) || (CC.turnover() >= g_num_turnover_limit))     //large buy and sell with volum||turnover
 			{
-				//printf("volum warning:%d\n", g_TranData.Volum);
-				LOG_IF(INFO, g_num_loglevel > 5) << "volum warning:" << g_TranData.Volum;
+				LOG_IF(INFO, g_num_loglevel > 5) << "volum||turnover warning:" << CC.volume();
 				TOPICHEAD m_TopicHeadSend;
 
 				m_TopicHeadSend.topic = atoi(m_pubtopic_single.c_str());
 				DateAndTime m_dtm=GetDateAndTime();
 				m_TopicHeadSend.ms = (m_dtm.time % 1000);
-				m_TopicHeadSend.kw = atoi(g_TranData.Code);
+				m_TopicHeadSend.kw = atoi(m_ch_code);
 				m_TopicHeadSend.sn = m_num_sn;
 				DateTime2Second(m_dtm.date, m_dtm.time, g_num_tm);
 				m_TopicHeadSend.tm = g_num_tm;
@@ -125,19 +141,50 @@ public:
 					.templateId(baseline::SDS_Signal::sbeTemplateId())
 					.schemaId(baseline::SDS_Signal::sbeSchemaId())
 					.version(baseline::SDS_Signal::sbeSchemaVersion());
-				Signal.wrapForEncode(sendBuf, hdr.size() + sizeof(TOPICHEAD), 256); //wrap data
-				Signal.signalID(SIGNALID);
-				Signal.putCode(g_TranData.Code);
-				Signal.date(g_TranData.Date);
-				Signal.time(g_TranData.Time);
+				Signal.wrapForEncode(sendBuf, hdr.size() + sizeof(TOPICHEAD), 256);       //wrap data
+
+				/*
+				*9:15-9:25 is auction time in both,14:57-15:00 is auction in shenzhen
+				*/
+				if (CC.time() < 93000000 && CC.time()>91459999)
+				{
+					Signal.signalID(AUCTION_SIGNAID);
+				}
+				else if ((CC.time() >= 145700000) && (CC.time() < 150500000) && (m_ch_code[8] == 'Z'))
+				{
+					Signal.signalID(AUCTION_SIGNAID);
+				}
+				else if (CC.bSFlag() == 'B' || CC.bSFlag() == 'b') //put signalid in data
+				{
+					Signal.signalID(BUY_SIGNALID);
+				}
+				else if (CC.bSFlag() == 'S' || CC.bSFlag() == 's')
+				{
+					Signal.signalID(SELL_SIGNALID);
+				}
+				else
+				{
+					Signal.signalID(AUCTION_SIGNAID);
+				}
+				/*else
+				{
+					LOG(INFO) << "seqno:" << CC.seqno() << " code:" << m_ch_code << " date:" << CC.date() << " time:" << CC.time()\
+						<< " sdstime:" << CC.sDSTime() << " sn:" << CC.sn() << " index:" << CC.index() << " price:" << CC.price() << " volume:" << CC.volume()\
+						<< " turnover:" << CC.turnover() << " bsflag:" << CC.bSFlag() << " orderkind:" << CC.orderKind() << " functioncode:" << CC.functionCode()\
+						<< " askorder" << CC.askOrder() << " bidorder:" << CC.bidOrder();
+				}*/
+				
+				Signal.putCode(m_ch_code);
+				Signal.date(CC.date());
+				Signal.time(CC.time());
 				string info;
 				makeinfo(CC, info);
 				Signal.putInfo(info.c_str());
 
 				string m_str_SendMess(sendBuf, 256);//sizeof(TOPICHEAD) + sizeof(baseline::MessageHeader) + sizeof(baseline::SDS_Signal));
 				Publish(g_str_pubid, m_pubtopic_single, m_str_SendMess);
-				LOG_IF(INFO, g_num_loglevel > 5) << "topic:" << m_pubtopic_single << "  sn:" << g_num_SH_sn << " publish success.";
-				if (g_TranData.Code[8] == 'Z' || g_TranData.Code[8] == 'z')  //shenzhen stock
+				LOG_IF(INFO, g_num_loglevel > 5) << "topic:" << m_pubtopic_single << "  sn:" << m_num_sn << "volum case publish success.";
+				if (m_ch_code[8] == 'Z' || m_ch_code[8] == 'z')  //shenzhen stock
 				{
 					g_num_SZ_sn++;
 				}
@@ -146,11 +193,7 @@ public:
 					g_num_SH_sn++;
 				}
 			}
-			//if (g_TranData.Turnover >= g_num_turnover_limit)     //large buy and sell with turnover
-			//{
-			//	printf("turnover warning:%d\n", g_TranData.Turnover);
-			//	Publish(g_str_pubid, g_str_pubtopic, smss);
-			//}
+
 			//if ((g_TranData.BSFlag == 'S') && (g_TranData.Volum >= g_num_extra_sell_volum_limit))   //特大主动卖
 			//{
 
@@ -239,9 +282,9 @@ int main(int argc, char* argv[])
 			m_Value_Temp.SetString(ALERT_VERSION, strlen(ALERT_VERSION), m_Allocator);
 			m_Value_ALERT.AddMember(g_str_configkey[i], g_str_configvalue[i], m_Allocator);
 		}
-		for (int i = (sizeof(g_str_configvalue) / sizeof(g_str_configvalue[0])); i < (sizeof(g_str_configkey) / sizeof(g_str_configkey[0])); i++)  //add int to json
+		for (int i = (sizeof(g_str_configvalue) / sizeof(g_str_configvalue[0])), j = 0; i < (sizeof(g_str_configkey) / sizeof(g_str_configkey[0])); i++, j++)  //add int to json
 		{
-			m_Value_ALERT.AddMember(g_str_configkey[i], volum_limit_level1, m_Allocator);
+			m_Value_ALERT.AddMember(g_str_configkey[i], g_num_configvalue[j], m_Allocator);
 		}
 
 		m_Document.AddMember(argv[0], m_Value_ALERT, m_Allocator);
@@ -252,6 +295,7 @@ int main(int argc, char* argv[])
 		std::string json(buf.GetString(), buf.Size());
 
 		ofs << json;
+		ofs.close();
 
 		return -1;
 	}

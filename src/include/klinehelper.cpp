@@ -4,6 +4,9 @@
 #else
 #define SPRINTF sprintf
 #endif
+
+#ifdef SBE_FORMAT
+#else
 /*
 *update maketdata from current receive data array
 *StartIdx : start index,start+1 price will be dest's open price
@@ -187,3 +190,4 @@ int Parase2Object(std::string json_data, KLineData &dest){
 	return 0;
 
 }
+#endif

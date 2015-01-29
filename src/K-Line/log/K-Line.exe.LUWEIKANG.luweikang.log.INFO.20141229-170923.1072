@@ -1,4 +1,0 @@
-Log file created at: 2014/12/29 17:09:23
-Running on machine: LUWEIKANG
-Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
-W1229 17:09:23.157721  9620 stage.cc:213] [Publish] cannot find pub_id: pub1

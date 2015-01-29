@@ -16,7 +16,6 @@
 #elif _LINUX
 #define ACCESS access
 #define MKDIR(a) mkdir((a),0755)
-
 #endif
 
 int CreatDir(const char *pszDir)
@@ -46,7 +45,6 @@ int CreatDir(const char *pszDir)
 			{
 				if (MKDIR(dir_path) < 0)
 				{
-					//printf("mkdir=%s:msg=%s\n", dir_path, strerror_s(errno));
 					return -1;
 				}
 			}
@@ -57,13 +55,25 @@ int CreatDir(const char *pszDir)
 	return 0;
 }
 
-int WriteData2file(const char* data, const char* filename, std::string dir ){
-	
+int WriteData2file(const char* data, const char* filename, std::string dir, std::ios_base::openmode mode){
 	CreatDir(dir.c_str());
-	std::ofstream out(dir+filename, std::ofstream::app);  //打开文件并以追加的形式向文件中写，不存在创建，存在打开
+	std::ofstream out(dir + filename, mode);  //打开文件并以追加的形式向文件中写，不存在创建，存在打开
+
+	if (out){
+		out << data << std::endl;
+	}
+	out.close();
+	return 0;
+}
+
+int WriteData2file(std::string data, const char* filename, std::string dir ){
+
+	CreatDir(dir.c_str());
+	std::ofstream out(dir+filename);  //打开文件并以追加的形式向文件中写，不存在创建，存在打开
 	
 	if (out){
 		out << data << std::endl;
+		//out.write(data, strlen(data));
 	}	
 	out.close();
 	return 0;
@@ -104,10 +114,9 @@ int TransferFile(const char * goal, const char * source,std::string goal_dir,std
 
 int ReadFilterCode(std::vector<std::string> &code_filter, std::string code_path)
 {
-	std::ifstream infile(code_path);//打开1.txt    
+	std::ifstream infile(code_path);
 	if (!infile)
 	{
-		printf("open file %s fail\n ", code_path.c_str());
 		return -1;
 	}
 	std::string temp;

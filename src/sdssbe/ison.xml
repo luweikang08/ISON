@@ -34,6 +34,7 @@
 	<type name="ENNameType" primitiveType="char" length="32"/>
 	<type name="CNNameType" primitiveType="char" length="32"/>
 	<type name="MarketType" primitiveType="char" length="6"/>
+	<type name="SignalType" primitiveType="char" length="50"/>
 </types>
 
 <sbe:message name="SDS_Level2" id="1" description="Description of a basic Car">
@@ -129,6 +130,28 @@
 	<field name="kw" id="3" type="uint32"/>
 	<field name="sn" id="4" type="uint32"/>
 	<field name="tm" id="5" type="uint32"/>
+</sbe:message>
+
+<sbe:message name="SDS_Signal" id="8" description="Description of a basic Car">
+        <field name="SignalID" id="1" type="uint8"/>
+        <field name="Code" id="2" type="CodeType"/>
+        <field name="Date" id="3" type="uint32"/>
+        <field name="Time" id="4" type="uint32"/>
+        <field name="Info" id="5" type="SignalType"/>      
+</sbe:message>
+
+<sbe:message name="SDS_Kline" id="9" description="Kline data">
+        <field name="Code" id="1" type="CodeType"/>
+        <field name="Date" id="2" type="uint32"/>
+        <field name="Time" id="3" type="uint32"/>
+		<field name="TimeStatus" id="4" type="uint8"/>
+		<field name="PreClose" id="5" type="uint32"/>
+		<field name="Open" id="6" type="uint32"/>
+		<field name="Close" id="7" type="uint32"/>
+		<field name="High" id="8" type="uint32"/>
+		<field name="Low" id="9" type="uint32"/>
+		<field name="Volume" id="10" type="uint64"/>
+		<field name="Turnover" id="11" type="uint64"/>   
 </sbe:message>
 
 </sbe:messageSchema>

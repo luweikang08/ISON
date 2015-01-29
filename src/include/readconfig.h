@@ -22,5 +22,6 @@ enum RF_RetCode //readfile return code
 
 int readjsonfile(const char* filename, std::vector <std::string> configkey, std::map<std::string, double> &configmap);
 RF_RetCode readjsonfile(const char* filename, const char* masterkey, std::vector <std::string> configkey, std::map<std::string, std::string> &configmap);
+RF_RetCode createjsonfile(const char* filename, const char* masterkey, std::vector <std::string> configkey, std::vector <std::string> configvalue);
 
 #endif

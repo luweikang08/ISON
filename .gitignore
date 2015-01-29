@@ -8,6 +8,7 @@ vcxproj
 *.user
 
 *.json
+*.exe.*
 /log
 
 /bin

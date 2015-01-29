@@ -1,5 +1,0 @@
-Log file created at: 2015/01/12 14:09:23
-Running on machine: LUWEIKANG
-Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
-I0112 14:09:23.491603  4424 tradealert.cpp:188] config.json:read success.
-I0112 14:10:04.946370  4424 tradealert.cpp:65] Actor start ok

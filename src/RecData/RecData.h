@@ -19,6 +19,7 @@
 #include "SDS_Transaction.hpp"
 #include "SDS_Level2.hpp"
 #include "SDS_Signal.hpp"
+#include "SDS_Kline.hpp"
 #include "data_struct.h"
 #include "isonsdsdataapi.h"
 #include "readconfig.h"
@@ -44,14 +45,14 @@
 #define JSON_FILE_DEFAULT "config.json"
 
 
-int parsesbe(std::string src)
+int parse_sbe_signal(std::string src)
 {
 	char recvBuf[256];
 	memcpy(recvBuf, src.c_str(), src.size());
 	TOPICHEAD* m_topichead_rec;
 	m_topichead_rec = (TOPICHEAD*)recvBuf;
 
-	std::cout << "topic:" << m_topichead_rec->topic;
+	//std::cout <<std::endl<< "topic:" << m_topichead_rec->topic<<std::endl;
 
 	baseline::SDS_Signal CC;
 	baseline::MessageHeader hdr;
@@ -60,7 +61,7 @@ int parsesbe(std::string src)
 	CC.wrapForDecode(recvBuf + sizeof(TOPICHEAD), hdr.size(), hdr.blockLength(), hdr.version(), 256);
 
 	char buf[50];
-	std::cout << "SignalID:" << CC.signalID() << std::endl;
+	std::cout << "SignalID:" << (int)CC.signalID() << std::endl;
 	strcpy_s(buf, CC.code());
 	std::cout << "code:" << buf << std::endl;
 	std::cout << "date:" << CC.date() << std::endl;
@@ -69,6 +70,66 @@ int parsesbe(std::string src)
 	std::cout << "info:" << buf << std::endl;
 
 	return 0;
+}
+
+
+int parse_sbe_kline(std::string src)
+{
+	char recvBuf[256];
+	memcpy(recvBuf, src.c_str(), src.size());
+	TOPICHEAD* m_topichead_rec;
+	m_topichead_rec = (TOPICHEAD*)recvBuf;
+
+	//std::cout << std::endl << "topic:" << m_topichead_rec->topic << std::endl;
+
+	baseline::SDS_Kline KK;
+	baseline::MessageHeader hdr;
+	int messageHeaderVersion = 0;
+	hdr.wrap(recvBuf + sizeof(TOPICHEAD), 0, messageHeaderVersion, 256);//解析头
+	KK.wrapForDecode(recvBuf + sizeof(TOPICHEAD), hdr.size(), hdr.blockLength(), hdr.version(), 256);
+
+	char buf[50];
+	strcpy_s(buf, KK.code());
+	string code(buf, 10);
+	if (strcmp(code.c_str(), "600446.SH") == 0)
+	{
+		std::cout << "code:" << buf << " date:" << KK.date() << " time:" << KK.time() << " TS:" << KK.timeStatus() << " preclose:" << KK.preClose()\
+			<< " open:" << KK.open() << " close:" << KK.close() << " high:" << KK.high() << " low:" << KK.low() << " vol:" << KK.volume() << " turn:" << KK.turnover() << endl;
+	}
+	LOG(INFO) << "code:" << buf << " date:" << KK.date() << " time:" << KK.time() << " TS:" << KK.timeStatus() << " preclose:" << KK.preClose()\
+		<< " open:" << KK.open() << " close:" << KK.close() << " high:" << KK.high() << " low:" << KK.low() << " vol:" << KK.volume() << " turn:" << KK.turnover();
+	return 0;
+}
+
+int parse_sbe_level2(std::string src)
+{
+	char recvBuf[1024];
+	memcpy(recvBuf, src.c_str(), src.size());
+	TOPICHEAD* m_topichead_rec;
+	m_topichead_rec = (TOPICHEAD*)recvBuf;
+
+	//std::cout << std::endl << "topic:" << m_topichead_rec->topic << std::endl;
+
+	baseline::SDS_Level2 LL;
+	baseline::MessageHeader hdr;
+	int messageHeaderVersion = 0;
+	hdr.wrap(recvBuf + sizeof(TOPICHEAD), 0, messageHeaderVersion, 1024);//解析头
+	LL.wrapForDecode(recvBuf + sizeof(TOPICHEAD), hdr.size(), hdr.blockLength(), hdr.version(), 1024);
+
+	return LL.sn();
+	//cout << LL.sn() << endl;
+
+	/*char buf[50];
+	strcpy_s(buf, LL.code());
+	string code(buf, 10);
+	if (strcmp(code.c_str(), "600446.SH") == 0)
+	{
+		std::cout << "code:" << buf << " date:" << KK.date() << " time:" << KK.time() << " TS:" << KK.timeStatus() << " preclose:" << KK.preClose()\
+			<< " open:" << KK.open() << " close:" << KK.close() << " high:" << KK.high() << " vol:" << KK.volume() << " turn:" << KK.turnover() << endl;
+	}
+	LOG(INFO) << "code:" << buf << " date:" << KK.date() << " time:" << KK.time() << " TS:" << KK.timeStatus() << " preclose:" << KK.preClose()\
+		<< " open:" << KK.open() << " close:" << KK.close() << " high:" << KK.high() << " vol:" << KK.volume() << " turn:" << KK.turnover();*/
+	//return 0;
 }
 
 #endif 

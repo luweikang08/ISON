@@ -5,7 +5,8 @@
 #include<string>
 #include<vector>
 
-int WriteData2file(const char* data, const char* filename, std::string dir);
+int WriteData2file(const char* data, const char* filename, std::string dir, std::ios_base::openmode mode = std::ios::app);
+int WriteData2file(std::string data, const char* filename, std::string dir);
 int TransferFile(const char * goal, const char * source, std::string goal_dir, std::string source_dir);
 int CreatDir(const char *pszDir);
 int ReadFilterCode(std::vector<std::string> &code_filter, std::string code_path);

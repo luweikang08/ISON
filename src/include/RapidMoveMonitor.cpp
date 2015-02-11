@@ -99,8 +99,8 @@ std::string RapidMoveMinitor::MakeSendStr(int topic, int sn, double rise_limit, 
 	std::stringstream strStm;
 	strStm << MovePercent;
 	Signal.putInfo(strStm.str().c_str());
-	std::string SendStr(SendBuf, sizeof(TOPICHEAD) + HdrSend.size() + Signal.sbeBlockLength());
-	return SendStr;
+	std::string m_SendStr(SendBuf, sizeof(TOPICHEAD) + HdrSend.size() + Signal.sbeBlockLength());
+	return m_SendStr;
 }
 
 const char *RapidMoveMinitor::GetDataCode(void)
@@ -148,7 +148,7 @@ unsigned int RapidMoveMinitor::GetDataTurnover()
 	return KK.turnover();
 }
 
-bool RapidMoveMinitor::isExist(const char* code)
+bool RapidMoveMinitor::IsExist(const char* code)
 {
 	std::map<std::string, std::string>::iterator it = DataMap.find(code);
 	if (it == DataMap.end())
@@ -160,11 +160,11 @@ bool RapidMoveMinitor::isExist(const char* code)
 		return true;
 	}
 }
-bool RapidMoveMinitor::isNeedPub()
+bool RapidMoveMinitor::IsNeedPub()
 {
 	return NeedPubFlag;
 }
-void RapidMoveMinitor::resetPubFlag()
+void RapidMoveMinitor::ResetPubFlag()
 {
 	NeedPubFlag = false;
 }

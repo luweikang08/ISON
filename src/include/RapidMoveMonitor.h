@@ -12,9 +12,6 @@
 #include "SDS_Signal.hpp"
 #include "data_defs.h"
 
-#define RISE_SIGNALID     4
-#define FALL_SIGNALID     5
-
 enum RM_STORE_RetCode
 {
 	RM_INSERT, //new stockid receive
@@ -44,9 +41,9 @@ namespace ison{
 			unsigned int GetDataVolume();
 			unsigned int GetDataTurnover();
 			double GetMovePercent();
-			bool isExist(const char* code);
-			bool isNeedPub();
-			void resetPubFlag();
+			bool IsExist(const char* code);
+			bool IsNeedPub();
+			void ResetPubFlag();
 		private:
 			DISALLOW_COPY_AND_ASSIGN(RapidMoveMinitor);
 			std::map<std::string, std::string> DataMap;//store data,<code,sbedata>,sbedata is messageheader+sds_kline,no topichead

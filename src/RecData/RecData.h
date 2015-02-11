@@ -20,6 +20,7 @@
 #include "SDS_Level2.hpp"
 #include "SDS_Signal.hpp"
 #include "SDS_Kline.hpp"
+#include "SDS_Indicator.hpp"
 #include "data_struct.h"
 #include "isonsdsdataapi.h"
 #include "readconfig.h"
@@ -88,15 +89,16 @@ int parse_sbe_kline(std::string src)
 	hdr.wrap(recvBuf + sizeof(TOPICHEAD), 0, messageHeaderVersion, 256);//解析头
 	KK.wrapForDecode(recvBuf + sizeof(TOPICHEAD), hdr.size(), hdr.blockLength(), hdr.version(), 256);
 
-	char buf[50];
+	char buf[16];
 	strcpy_s(buf, KK.code());
-	string code(buf, 10);
+	string code(buf, 16);
 	if (strcmp(code.c_str(), "600446.SH") == 0)
 	{
-		std::cout << "code:" << buf << " date:" << KK.date() << " time:" << KK.time() << " TS:" << KK.timeStatus() << " preclose:" << KK.preClose()\
+		std::cout << "code:" << buf << " date:" << KK.date() << " time:" << KK.time() << " TS:" << (int)KK.timeStatus() << " preclose:" << KK.preClose()\
 			<< " open:" << KK.open() << " close:" << KK.close() << " high:" << KK.high() << " low:" << KK.low() << " vol:" << KK.volume() << " turn:" << KK.turnover() << endl;
 	}
-	LOG(INFO) << "code:" << buf << " date:" << KK.date() << " time:" << KK.time() << " TS:" << KK.timeStatus() << " preclose:" << KK.preClose()\
+	LOG(INFO) << "topic:" << m_topichead_rec->topic << " ms:" << m_topichead_rec->ms << " kw:" << m_topichead_rec->kw << " sn:" << m_topichead_rec->sn << " tm:" << m_topichead_rec->tm\
+		<< " code:" << buf << " date:" << KK.date() << " time:" << KK.time() << " TS:" << (int)KK.timeStatus() << " preclose:" << KK.preClose()\
 		<< " open:" << KK.open() << " close:" << KK.close() << " high:" << KK.high() << " low:" << KK.low() << " vol:" << KK.volume() << " turn:" << KK.turnover();
 	return 0;
 }
@@ -130,6 +132,32 @@ int parse_sbe_level2(std::string src)
 	LOG(INFO) << "code:" << buf << " date:" << KK.date() << " time:" << KK.time() << " TS:" << KK.timeStatus() << " preclose:" << KK.preClose()\
 		<< " open:" << KK.open() << " close:" << KK.close() << " high:" << KK.high() << " vol:" << KK.volume() << " turn:" << KK.turnover();*/
 	//return 0;
+}
+
+int parse_sbe_indicator(std::string src)
+{
+	char recvBuf[256];
+	memcpy(recvBuf, src.c_str(), src.size());
+	TOPICHEAD* m_topichead_rec;
+	m_topichead_rec = (TOPICHEAD*)recvBuf;
+
+	//std::cout <<std::endl<< "topic:" << m_topichead_rec->topic<<std::endl;
+
+	baseline::SDS_Indicator II;
+	baseline::MessageHeader hdr;
+	int messageHeaderVersion = 0;
+	hdr.wrap(recvBuf + sizeof(TOPICHEAD), 0, messageHeaderVersion, 256);//解析头
+	II.wrapForDecode(recvBuf + sizeof(TOPICHEAD), hdr.size(), hdr.blockLength(), hdr.version(), 256);
+
+	char buf[50];
+	std::cout << "SignalID:" << (int)II.signalID() << std::endl;
+	strcpy_s(buf, II.code());
+	std::cout << "code:" << buf << std::endl;
+	std::cout << "date:" << II.date() << std::endl;
+	std::cout << "time:" << II.time() << std::endl;
+	std::cout << "data:" << II.dataArr(0) << "," << II.dataArr(1) << "," << II.dataArr(2) << "," << II.dataArr(3) << "," << II.dataArr(4) << std::endl;
+
+	return 0;
 }
 
 #endif 

@@ -23,6 +23,12 @@
 #define MARKETLENGTH 6
 typedef  unsigned short un_short;
 typedef unsigned int un_int;
+#define SYSDATA 83898377
+//定义top前缀
+#define PreTopicLevel2 (std::string)"HL."
+#define PreTopicTrans (std::string)"HT."
+#define PreTopicQueue (std::string)"HQ."
+#define PreTopicCode (std::string)"HC."
 
 //系统消息和数据消息的定义
 enum ISON_MSG_ID{
@@ -113,6 +119,10 @@ TSH_LEVEL1DATA = 1111,//上海交易所	LEVEL1DATA	LEVEL1数据
 TSH_LEVEL2 = 1112,	//上海交易所	LEVEL2DATA	LEVEL2数据
 TSH_ORDERQUEUE = 1113,	//上海交易所	ORDERQUEUE	订单队列
 TSH_TRANSACTION = 1114	//上海交易所	TRANSACTION	逐笔成交
+};
+enum SDS2TGW_SYS{
+TSZ_CODETABLE =SYSDATA+ 1010,
+TSH_CODETABLE = SYSDATA + 1110,
 };
 
 struct TOPICHEAD{

@@ -11,10 +11,6 @@
 #include "SDS_Signal.hpp"
 #include "data_defs.h"
 
-#define BUY_SIGNALID      1
-#define SELL_SIGNALID     2
-#define AUCTION_SIGNAID   3
-
 enum EqualFlag
 {
 	EF_Error,

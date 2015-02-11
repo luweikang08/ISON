@@ -18,5 +18,20 @@
     <ClCompile Include="TestTalib.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ta-lib\c\src\tools\ta_regtest\ta_gDataClose.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ta-lib\c\src\tools\ta_regtest\ta_gDataHigh.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ta-lib\c\src\tools\ta_regtest\ta_gDataLow.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ta-lib\c\src\tools\ta_regtest\ta_gDataOpen.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\kdj_func.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

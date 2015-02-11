@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KLine", "src\KLine\KLine.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShortElf", "src\ShortElf\ShortElf.vcxproj", "{40310C1B-02D8-4000-96BF-2523618CD580}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "POIndicator", "src\POIndicator\POIndicator.vcxproj", "{DD2F20D1-D778-4F3C-A2E4-4BE6F611FBB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -87,6 +89,10 @@ Global
 		{40310C1B-02D8-4000-96BF-2523618CD580}.Debug|Win32.Build.0 = Debug|Win32
 		{40310C1B-02D8-4000-96BF-2523618CD580}.Release|Win32.ActiveCfg = Release|Win32
 		{40310C1B-02D8-4000-96BF-2523618CD580}.Release|Win32.Build.0 = Release|Win32
+		{DD2F20D1-D778-4F3C-A2E4-4BE6F611FBB6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DD2F20D1-D778-4F3C-A2E4-4BE6F611FBB6}.Debug|Win32.Build.0 = Debug|Win32
+		{DD2F20D1-D778-4F3C-A2E4-4BE6F611FBB6}.Release|Win32.ActiveCfg = Release|Win32
+		{DD2F20D1-D778-4F3C-A2E4-4BE6F611FBB6}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

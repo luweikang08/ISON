@@ -36,8 +36,9 @@ public:
 		if (g_str_topic[1] != "")
 			Subscribe(g_str_subid, g_str_topic[1]);
 		GetSystemTime(&g_time);
-		outFile <<"start time:"<< g_time.wYear << g_time.wMonth << g_time.wDay << " " << g_time.wHour + 8 << g_time.wMinute << g_time.wSecond << " " << g_time.wMilliseconds << endl;
-		outFile.close();
+		/*outFile <<"start time:"<< g_time.wYear << g_time.wMonth << g_time.wDay << " " << g_time.wHour + 8 << g_time.wMinute << g_time.wSecond << " " << g_time.wMilliseconds << endl;
+		outFile.close();*/
+		LOG(INFO) << "start time:" << g_time.wYear << g_time.wMonth << g_time.wDay << " " << g_time.wHour + 8 << g_time.wMinute << g_time.wSecond << " " << g_time.wMilliseconds;
 		cout << "test start ok" << endl;
 		return 0;
 	}
@@ -57,6 +58,11 @@ public:
 		int temp;
 		switch (s)
 		{
+		case 2120:
+		case 2021:
+		case 21:
+		case 20:parse_sbe_indicator(smss);
+			break;
 		case 1918:
 		case 1819:
 		case 19:
@@ -110,12 +116,12 @@ int main(int argc, char* argv[]) {
 	Stage stage(ctx);
 
 	GetSystemTime(&g_time);
-	sprintf_s(g_chtimenow, "%d%d%d %d%d%d", g_time.wYear, g_time.wMonth, g_time.wDay, g_time.wHour + 8, g_time.wMinute, g_time.wSecond);
+	/*sprintf_s(g_chtimenow, "%d%d%d %d%d%d", g_time.wYear, g_time.wMonth, g_time.wDay, g_time.wHour + 8, g_time.wMinute, g_time.wSecond);
 	m_str_FilePath.append("out");
 	m_str_FilePath.append(g_chtimenow);
-	m_str_FilePath.append(".txt");
+	m_str_FilePath.append(".txt");*/
 	//fopen_s(&g_file_outputfile, m_str_FilePath.c_str(), "a+");
-	outFile.open(m_str_FilePath, ios::app);
+	//outFile.open(m_str_FilePath, ios::app);
 
 	stage.Bind("tcp://*:7711");
 	cout << "Endpoint:(1)192.168.15.200,(2)tcp://192.166.1.203,(3)tcp://192.166.1.204,(4)tcp://127.0.0.1\n---select addr:";
@@ -133,10 +139,14 @@ int main(int argc, char* argv[]) {
 		break;
 	}
 
-	cout << "Port:(1)2010,(2)2011,(3)2012,(4)1212,(5)7799,(6)7788\n(7)2030,(8)2031,(9)2032\n---select port:";
+	cout << "Port:(1)2010,(2)2011,(3)2012,(4)1212,(5)7799,(6)7788\n(7)2030,(8)2031,(9)2032,(10)6001,(11)2003\n---select port:";
 	cin >> s;
 	switch (s)
 	{
+	case 11:g_str_subendpoint.append("2003");
+		break;
+	case 10:g_str_subendpoint.append("6001");
+		break;
 	case 9:g_str_subendpoint.append("2032");
 		break;
 	case 8:g_str_subendpoint.append("2031");
@@ -159,14 +169,18 @@ int main(int argc, char* argv[]) {
 	}
 
 	s = -1;
-	cout << "1)83,2)600446,3)88,4)1002,5)1004,6)1102,7)1104,\n8)1012,9)1014,10)1112,11)1114,\n12)2011,13)2111,14)2012,15)2112,\n\
-		16)2030,17)2130,18)2031,19)2131,21)2032,22)2132,\n---select topic:";
+	cout << "1)83,2)600446,3)88,4)1002,5)1004,6)1102,7)1104,\n8)1012,9)1014,10)1112,11)1114,\n12)2011,13)2111,14)2012,15)2112,\n"\
+		<< "16)2030,17)2130,18)2031,19)2131,20)2032,21)2132,\n"\
+		<< "22)HL,\n"\
+		<< "---select topic:";
 	cin >> s;
 	if (s < 20)
 		goto single;
 	int i = 0;
 	switch (s / 100)
 	{
+	case 22:g_str_topic[i] = "HL";
+		break;
 	case 21:g_str_topic[i] = "2132";
 		break;
 	case 20:g_str_topic[i] = "2032";
@@ -216,6 +230,8 @@ int main(int argc, char* argv[]) {
 single:
 	switch (s%100)
 	{
+	case 22:g_str_topic[i] = "HL";
+		break;
 	case 21:g_str_topic[i] = "2132";
 		break;
 	case 20:g_str_topic[i] = "2032";

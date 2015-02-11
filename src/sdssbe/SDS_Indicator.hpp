@@ -45,7 +45,7 @@ public:
 
     static const sbe_uint16_t sbeTemplateId(void)
     {
-        return (sbe_uint16_t)10;
+        return (sbe_uint16_t)11;
     }
 
     static const sbe_uint16_t sbeSchemaId(void)
@@ -374,23 +374,23 @@ public:
         return *this;
     }
 
-    static const int dataFstId(void)
+    static const int dataArrId(void)
     {
         return 5;
     }
 
-    static const int dataFstSinceVersion(void)
+    static const int dataArrSinceVersion(void)
     {
          return 0;
     }
 
-    bool dataFstInActingVersion(void)
+    bool dataArrInActingVersion(void)
     {
         return (actingVersion_ >= 0) ? true : false;
     }
 
 
-    static const char *dataFstMetaAttribute(const MetaAttribute::Attribute metaAttribute)
+    static const char *DataArrMetaAttribute(const MetaAttribute::Attribute metaAttribute)
     {
         switch (metaAttribute)
         {
@@ -402,245 +402,65 @@ public:
         return "";
     }
 
-    static const sbe_double_t dataFstNullValue()
+    static const sbe_double_t dataArrNullValue()
     {
         return SBE_DOUBLE_NAN;
     }
 
-    static const sbe_double_t dataFstMinValue()
+    static const sbe_double_t dataArrMinValue()
     {
         return 4.9E-324;
     }
 
-    static const sbe_double_t dataFstMaxValue()
+    static const sbe_double_t dataArrMaxValue()
     {
         return 1.7976931348623157E308;
     }
 
-    sbe_double_t dataFst(void) const
+    static const int dataArrLength(void)
     {
-        return SBE_LITTLE_ENDIAN_ENCODE_64(*((sbe_double_t *)(buffer_ + offset_ + 25)));
+        return 5;
     }
 
-    SDS_Indicator &dataFst(const sbe_double_t value)
+    const char *dataArr(void) const
     {
-        *((sbe_double_t *)(buffer_ + offset_ + 25)) = SBE_LITTLE_ENDIAN_ENCODE_64(value);
-        return *this;
+        return (buffer_ + offset_ + 25);
     }
 
-    static const int dataSecId(void)
+    sbe_double_t dataArr(const int index) const
     {
-        return 6;
-    }
-
-    static const int dataSecSinceVersion(void)
-    {
-         return 0;
-    }
-
-    bool dataSecInActingVersion(void)
-    {
-        return (actingVersion_ >= 0) ? true : false;
-    }
-
-
-    static const char *dataSecMetaAttribute(const MetaAttribute::Attribute metaAttribute)
-    {
-        switch (metaAttribute)
+        if (index < 0 || index >= 5)
         {
-            case MetaAttribute::EPOCH: return "unix";
-            case MetaAttribute::TIME_UNIT: return "nanosecond";
-            case MetaAttribute::SEMANTIC_TYPE: return "";
+            throw "index out of range for dataArr";
         }
 
-        return "";
+        return SBE_LITTLE_ENDIAN_ENCODE_64(*((sbe_double_t *)(buffer_ + offset_ + 25 + (index * 8))));
     }
 
-    static const sbe_double_t dataSecNullValue()
+    void dataArr(const int index, const sbe_double_t value)
     {
-        return SBE_DOUBLE_NAN;
-    }
-
-    static const sbe_double_t dataSecMinValue()
-    {
-        return 4.9E-324;
-    }
-
-    static const sbe_double_t dataSecMaxValue()
-    {
-        return 1.7976931348623157E308;
-    }
-
-    sbe_double_t dataSec(void) const
-    {
-        return SBE_LITTLE_ENDIAN_ENCODE_64(*((sbe_double_t *)(buffer_ + offset_ + 33)));
-    }
-
-    SDS_Indicator &dataSec(const sbe_double_t value)
-    {
-        *((sbe_double_t *)(buffer_ + offset_ + 33)) = SBE_LITTLE_ENDIAN_ENCODE_64(value);
-        return *this;
-    }
-
-    static const int dataTrdId(void)
-    {
-        return 7;
-    }
-
-    static const int dataTrdSinceVersion(void)
-    {
-         return 0;
-    }
-
-    bool dataTrdInActingVersion(void)
-    {
-        return (actingVersion_ >= 0) ? true : false;
-    }
-
-
-    static const char *dataTrdMetaAttribute(const MetaAttribute::Attribute metaAttribute)
-    {
-        switch (metaAttribute)
+        if (index < 0 || index >= 5)
         {
-            case MetaAttribute::EPOCH: return "unix";
-            case MetaAttribute::TIME_UNIT: return "nanosecond";
-            case MetaAttribute::SEMANTIC_TYPE: return "";
+            throw "index out of range for dataArr";
         }
 
-        return "";
+        *((sbe_double_t *)(buffer_ + offset_ + 25 + (index * 8))) = SBE_LITTLE_ENDIAN_ENCODE_64(value);
     }
 
-    static const sbe_double_t dataTrdNullValue()
+    int getDataArr(char *dst, const int length) const
     {
-        return SBE_DOUBLE_NAN;
-    }
-
-    static const sbe_double_t dataTrdMinValue()
-    {
-        return 4.9E-324;
-    }
-
-    static const sbe_double_t dataTrdMaxValue()
-    {
-        return 1.7976931348623157E308;
-    }
-
-    sbe_double_t dataTrd(void) const
-    {
-        return SBE_LITTLE_ENDIAN_ENCODE_64(*((sbe_double_t *)(buffer_ + offset_ + 41)));
-    }
-
-    SDS_Indicator &dataTrd(const sbe_double_t value)
-    {
-        *((sbe_double_t *)(buffer_ + offset_ + 41)) = SBE_LITTLE_ENDIAN_ENCODE_64(value);
-        return *this;
-    }
-
-    static const int dataFouId(void)
-    {
-        return 8;
-    }
-
-    static const int dataFouSinceVersion(void)
-    {
-         return 0;
-    }
-
-    bool dataFouInActingVersion(void)
-    {
-        return (actingVersion_ >= 0) ? true : false;
-    }
-
-
-    static const char *dataFouMetaAttribute(const MetaAttribute::Attribute metaAttribute)
-    {
-        switch (metaAttribute)
+        if (length > 5)
         {
-            case MetaAttribute::EPOCH: return "unix";
-            case MetaAttribute::TIME_UNIT: return "nanosecond";
-            case MetaAttribute::SEMANTIC_TYPE: return "";
+             throw "length too large for getDataArr";
         }
 
-        return "";
+        ::memcpy(dst, buffer_ + offset_ + 25, length);
+        return length;
     }
 
-    static const sbe_double_t dataFouNullValue()
+    SDS_Indicator &putDataArr(const char *src)
     {
-        return SBE_DOUBLE_NAN;
-    }
-
-    static const sbe_double_t dataFouMinValue()
-    {
-        return 4.9E-324;
-    }
-
-    static const sbe_double_t dataFouMaxValue()
-    {
-        return 1.7976931348623157E308;
-    }
-
-    sbe_double_t dataFou(void) const
-    {
-        return SBE_LITTLE_ENDIAN_ENCODE_64(*((sbe_double_t *)(buffer_ + offset_ + 49)));
-    }
-
-    SDS_Indicator &dataFou(const sbe_double_t value)
-    {
-        *((sbe_double_t *)(buffer_ + offset_ + 49)) = SBE_LITTLE_ENDIAN_ENCODE_64(value);
-        return *this;
-    }
-
-    static const int dataFivId(void)
-    {
-        return 9;
-    }
-
-    static const int dataFivSinceVersion(void)
-    {
-         return 0;
-    }
-
-    bool dataFivInActingVersion(void)
-    {
-        return (actingVersion_ >= 0) ? true : false;
-    }
-
-
-    static const char *dataFivMetaAttribute(const MetaAttribute::Attribute metaAttribute)
-    {
-        switch (metaAttribute)
-        {
-            case MetaAttribute::EPOCH: return "unix";
-            case MetaAttribute::TIME_UNIT: return "nanosecond";
-            case MetaAttribute::SEMANTIC_TYPE: return "";
-        }
-
-        return "";
-    }
-
-    static const sbe_double_t dataFivNullValue()
-    {
-        return SBE_DOUBLE_NAN;
-    }
-
-    static const sbe_double_t dataFivMinValue()
-    {
-        return 4.9E-324;
-    }
-
-    static const sbe_double_t dataFivMaxValue()
-    {
-        return 1.7976931348623157E308;
-    }
-
-    sbe_double_t dataFiv(void) const
-    {
-        return SBE_LITTLE_ENDIAN_ENCODE_64(*((sbe_double_t *)(buffer_ + offset_ + 57)));
-    }
-
-    SDS_Indicator &dataFiv(const sbe_double_t value)
-    {
-        *((sbe_double_t *)(buffer_ + offset_ + 57)) = SBE_LITTLE_ENDIAN_ENCODE_64(value);
+        ::memcpy(buffer_ + offset_ + 25, src, 5);
         return *this;
     }
 };

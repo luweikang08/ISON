@@ -42,7 +42,7 @@ public:
 		{
 			cout << ".";
 			g_Klb.Store(e.message());
-			if (g_Klb.isNeedPub())
+			if (g_Klb.IsNeedPub())
 			{
 				std::memcpy(m_ch_code, g_Klb.GetDataCode(), 16);//new
 				if (m_ch_code[8] == 'Z' || m_ch_code[8] == 'z')  //shenzhen stock
@@ -57,7 +57,17 @@ public:
 				}
 				std::string m_SendStr = g_Klb.MakeSendStr(m_pubtopic, m_num_sn);
 				Publish(PUBID, itostring(m_pubtopic), m_SendStr);
-				g_Klb.resetPubFlag();
+				cout << "x";
+				g_Klb.ResetPubFlag();
+
+				if (m_ch_code[8] == 'Z' || m_ch_code[8] == 'z')  //shenzhen stock
+				{
+					g_num_SZ_sn++;
+				}
+				else       //shanghai stock and others
+				{
+					g_num_SH_sn++;
+				}
 				
 				char Buffer_temp[BUFFELENGTH];
 				TOPICHEAD TopicHead_temp;
@@ -66,8 +76,8 @@ public:
 				baseline::SDS_Kline KK_temp;
 				hdr_temp.wrap(Buffer_temp, sizeof(TOPICHEAD), MESSAGEHEADERVERSION, BUFFELENGTH);
 				KK_temp.wrapForDecode(Buffer_temp, sizeof(TOPICHEAD) + hdr_temp.size(), hdr_temp.blockLength(), hdr_temp.version(), BUFFELENGTH);
-				LOG(INFO) << "Code:" << KK_temp.code() << "Time:" << KK_temp.time() << "Open:" << KK_temp.open() << "Close:" << KK_temp.close() << "High:" << KK_temp.high() << "Low:" << KK_temp.low()\
-					<< "Volume:" << KK_temp.volume() << "Turnover:" << KK_temp.turnover();
+				LOG(INFO) << "Code:" << KK_temp.code() << " Time:" << KK_temp.time() << " Open:" << KK_temp.open() << " Close:" << KK_temp.close() << " High:" << KK_temp.high() << " Low:" << KK_temp.low()\
+					<< " Volume:" << KK_temp.volume() << " Turnover:" << KK_temp.turnover();
 			}
 		}
 		return 0;
@@ -79,7 +89,7 @@ public:
 	TimerActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
-		//AddTimer(30000);
+		AddTimer(30000);
 		LOG(INFO) << "TimerActor start ok";
 		return 0;
 	}
@@ -88,7 +98,31 @@ public:
 		DateAndTime m_DateAndTime = GetDateAndTime();
 		int m_pubtopic;
 		int m_num_sn;
+		char m_ch_code[16];
 		
+		g_Klb.InitIt();
+		for (int i = 0; i < g_Klb.GetDataMapSize(); i++)
+		{
+			if (g_Klb.ChkItNeedPub())
+			{
+				std::memcpy(m_ch_code, g_Klb.GetCodeInIt(), 16);//new
+				if (m_ch_code[8] == 'Z' || m_ch_code[8] == 'z')  //shenzhen stock
+				{
+					m_pubtopic = ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE;
+					m_num_sn = g_num_SZ_sn;
+				}
+				else       //shanghai stock and others
+				{
+					m_pubtopic = ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE;
+					m_num_sn = g_num_SH_sn;
+				}
+				std::string m_SendStr = g_Klb.MakeSendStr(m_pubtopic, m_num_sn);
+				Publish(PUBID, itostring(m_pubtopic), m_SendStr);
+				cout << "y";
+			}
+			g_Klb.IncreIt();//iterator++
+		}
+
 		return 0;
 	}
 };

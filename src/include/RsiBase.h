@@ -13,10 +13,16 @@
 #include "SDS_Level2.hpp"
 #include "SDS_Indicator.hpp"
 
-#define DATACNT    25 //src data count in array
+#define DATACNTRSI    25 //src data count in array
 #define RSI1PERIOD 6
 #define RSI2PERIOD 12
 #define RSI3PERIOD 24
+
+#ifdef NOTOPICHEAD
+#define TOPICHEADSIZE 0
+#else 
+#define TOPICHEADSIZE sizeof(TOPICHEAD)
+#endif
 
 enum RSI_STORE_RetCode
 {

@@ -15,8 +15,8 @@ RSI_STORE_RetCode RsiBase::Store(std::string kline_src)
 	std::memcpy(srcBuffer, kline_src.c_str(), kline_src.size());
 	baseline::MessageHeader hdr_src;
 	baseline::SDS_Kline KK_src;
-	hdr_src.wrap(srcBuffer + sizeof(TOPICHEAD), 0, MESSAGEHEADERVERSION, BUFFELENGTH);
-	KK_src.wrapForDecode(srcBuffer + sizeof(TOPICHEAD), hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
+	hdr_src.wrap(srcBuffer + TOPICHEADSIZE, 0, MESSAGEHEADERVERSION, BUFFELENGTH);
+	KK_src.wrapForDecode(srcBuffer + TOPICHEADSIZE, hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
 
 	if ((KK_src.time() < 93000000) || (KK_src.time() > 113059999 && KK_src.time() < 130000000) || (KK_src.time() > 150059999))
 	{
@@ -31,32 +31,32 @@ RSI_STORE_RetCode RsiBase::Store(std::string kline_src)
 		DataMap.insert(std::pair<std::string, std::vector<int>>(KK_src.code(), v_data));
 		return RSI_ADD;
 	}
-	if (it->second.size() < DATACNT - 1)
+	if (it->second.size() < DATACNTRSI - 1)
 	{
 		it->second.push_back(KK_src.close());
 		return RSI_INSERT;
 	}
 	else
 	{
-		double     InReal[DATACNT];
+		double     InReal[DATACNTRSI];
 		int        OutBeg;
 		int        OutNbElement;
-		double     OutRSI1[DATACNT];
-		double     OutRSI2[DATACNT];
-		double     OutRSI3[DATACNT];
+		double     OutRSI1[DATACNTRSI];
+		double     OutRSI2[DATACNTRSI];
+		double     OutRSI3[DATACNTRSI];
 		it->second.push_back(KK_src.close());
 		int i = 0;
 		for (auto value : it->second)
 		{
 			InReal[i++] = value;
 		}
-		if (TA_RSI(0,DATACNT-1,&InReal[0],RSI1PERIOD,&OutBeg,&OutNbElement,&OutRSI1[0])==TA_SUCCESS)
+		if (TA_RSI(0,DATACNTRSI-1,&InReal[0],RSI1PERIOD,&OutBeg,&OutNbElement,&OutRSI1[0])==TA_SUCCESS)
 		{
 			ResultDataArr[0] = OutRSI1[OutNbElement - 1];
-			if (TA_RSI(0, DATACNT - 1, &InReal[0], RSI2PERIOD, &OutBeg, &OutNbElement, &OutRSI2[0]) == TA_SUCCESS)
+			if (TA_RSI(0, DATACNTRSI - 1, &InReal[0], RSI2PERIOD, &OutBeg, &OutNbElement, &OutRSI2[0]) == TA_SUCCESS)
 			{
 				ResultDataArr[1] = OutRSI2[OutNbElement - 1];
-				if (TA_RSI(0, DATACNT - 1, &InReal[0], RSI3PERIOD, &OutBeg, &OutNbElement, &OutRSI3[0]) == TA_SUCCESS)
+				if (TA_RSI(0, DATACNTRSI - 1, &InReal[0], RSI3PERIOD, &OutBeg, &OutNbElement, &OutRSI3[0]) == TA_SUCCESS)
 				{
 					ResultDataArr[2] = OutRSI3[OutNbElement - 1];
 					it->second.erase(it->second.begin());

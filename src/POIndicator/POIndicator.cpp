@@ -25,10 +25,11 @@ public:
 	SubActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
-		Subscribe(SUBID_OF_SUB, itostring(ISON_SDS2TGW::TSZ_LEVEL2));
-		Subscribe(SUBID_OF_SUB, itostring(ISON_SDS2TGW::TSH_LEVEL2));
-		Subscribe(SUBID_OF_SUB, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
-		Subscribe(SUBID_OF_SUB, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));
+		//Subscribe(SUBID_OF_SUB, itostring(ISON_SDS2TGW::TSZ_LEVEL2));
+		//Subscribe(SUBID_OF_SUB, itostring(ISON_SDS2TGW::TSH_LEVEL2));
+		//Subscribe(SUBID_OF_SUB, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
+		//Subscribe(SUBID_OF_SUB, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));
+		Subscribe(SUBID_OF_SUB, PreTopicKline);
 		cout << "SubActor start ok" << endl;
 		LOG(INFO) << "SubActor start ok";
 		return 0;
@@ -44,7 +45,8 @@ public:
 
 			TOPICHEAD* m_TopicHead;
 			m_TopicHead = (TOPICHEAD*)buffer;
-			Publish(PUBID_OF_SUB, itostring(m_TopicHead->topic), smss);
+			//Publish(PUBID_OF_SUB, itostring(m_TopicHead->topic), smss);
+			Publish(PUBID_OF_SUB, PreTopicKline, smss);
 		}
 		return 0;
 	}
@@ -55,8 +57,9 @@ public:
 	MacdActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
-		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
-		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));
+		/*Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
+		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));*/
+		Subscribe(SUBID_OF_PROC, PreTopicKline);
 		cout << "MacdActor start ok" << endl;
 		LOG(INFO) << "MacdActor start ok";
 		return 0;
@@ -106,8 +109,9 @@ public:
 	KdjActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
-		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
-		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));
+		/*Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
+		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));*/
+		Subscribe(SUBID_OF_PROC, PreTopicKline);
 		cout << "KdjActor start ok" << endl;
 		LOG(INFO) << "KdjActor start ok";
 		return 0;
@@ -170,8 +174,9 @@ public:
 	RsiActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
-		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
-		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));
+		//Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
+		//Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));
+		Subscribe(SUBID_OF_PROC, PreTopicKline);
 		cout << "RsiActor start ok" << endl;
 		LOG(INFO) << "RsiActor start ok";
 		return 0;
@@ -221,8 +226,9 @@ public:
 	BollActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
-		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
-		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));
+		//Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
+		//Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));
+		Subscribe(SUBID_OF_PROC, PreTopicKline);
 		cout << "BollActor start ok" << endl;
 		LOG(INFO) << "BollActor start ok";
 		return 0;
@@ -377,8 +383,8 @@ int main(int argc, char* argv[])
 
 	ActorPtr Sub_Actor(new SubActor("sub"));
 	stage_sub.AddActor(Sub_Actor);
-	//ActorPtr Macd_Actor(new MacdActor("macd"));
-	//stage_proc.AddActor(Macd_Actor);
+	ActorPtr Macd_Actor(new MacdActor("macd"));
+	stage_proc.AddActor(Macd_Actor);
 	ActorPtr Kdj_Actor(new KdjActor("kdj"));
 	stage_proc.AddActor(Kdj_Actor);
 	ActorPtr Rsi_Actor(new KdjActor("rsi"));

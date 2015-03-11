@@ -1,0 +1,10 @@
+                       ShortElf Utility Update Notice
+	          ==========================================
+-------------------
+V1.00.00 2015/02/12
+-------------------
+	1. First Release.
+	2. cotain LTM,RMM,FM
+	3. cotain three stage:stage_sub,stage_proc,stage_pub
+							                                      luweikang, 2015/02/12
+

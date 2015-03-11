@@ -8,7 +8,7 @@ LargeTranMonitor::LargeTranMonitor()
 }
 LargeTranMonitor::LargeTranMonitor(std::string src)
 {
-	std::memcpy(StoreBuffer, src.c_str(), src.size());
+	memcpy(StoreBuffer, src.c_str(), src.size());
 }
 LargeTranMonitor::~LargeTranMonitor()
 {
@@ -17,11 +17,11 @@ LargeTranMonitor::~LargeTranMonitor()
 
 int LargeTranMonitor::Store(std::string src)
 {
-	std::memcpy(StoreBuffer, src.c_str(), src.size());
+	memcpy(StoreBuffer, src.c_str(), src.size());
 	TOPICHEAD *topichead_temp;
 	topichead_temp = (TOPICHEAD*)StoreBuffer;
-	MessHdr.wrap(StoreBuffer, sizeof(TOPICHEAD), MESSAGEHEADERVERSION, 256);
-	Tran.wrapForDecode(StoreBuffer, sizeof(TOPICHEAD) + MessHdr.size(), MessHdr.blockLength(), MessHdr.version(), 256);
+	MessHdr.wrap(StoreBuffer, TOPICHEADSIZE, MESSAGEHEADERVERSION, BUFFELENGTH);
+	Tran.wrapForDecode(StoreBuffer, TOPICHEADSIZE + MessHdr.size(), MessHdr.blockLength(), MessHdr.version(), BUFFELENGTH);
 	return 0;
 }
 
@@ -61,7 +61,7 @@ std::string LargeTranMonitor::MakeSendStr(int topic, int sn)
 	TopicHeadSend.topic = topic;
 	DateAndTime m_dtm = GetDateAndTime();
 	TopicHeadSend.ms = (m_dtm.time % 1000);
-	std::memcpy(Code, Tran.code(), 16);
+	memcpy(Code, Tran.code(), 16);
 	TopicHeadSend.kw = atoi(Code);
 	TopicHeadSend.sn = sn;
 	unsigned int num_tm;
@@ -87,6 +87,10 @@ std::string LargeTranMonitor::MakeSendStr(int topic, int sn)
 	else if (Tran.bSFlag() == 'S' || Tran.bSFlag() == 's')
 	{
 		Signal.signalID(SELL_SIGNALID);
+	}
+	else
+	{
+		Signal.signalID(LTMERROR_SIGNALID);
 	}
 	Signal.putCode(Code);
 	Signal.date(Tran.date());

@@ -58,6 +58,27 @@ public:
 		int temp;
 		switch (s)
 		{
+		case 2727:
+		case 2626:
+		case 26:
+			parse_sbe_kline_no(smss);
+			break;
+		case 2323:
+		case 23:
+			temp = parse_sbe_trans(smss);
+			if (g_num_link == 0)
+			{
+				g_num_link = temp;
+			}
+			else
+			{
+				if ((temp - g_num_link) > 1)
+				{
+					cout << g_num_link << "," << (temp - g_num_link) << "," << temp;
+				}
+				g_num_link = temp;
+			}
+			break;
 		case 2120:
 		case 2021:
 		case 21:
@@ -124,10 +145,12 @@ int main(int argc, char* argv[]) {
 	//outFile.open(m_str_FilePath, ios::app);
 
 	stage.Bind("tcp://*:7711");
-	cout << "Endpoint:(1)192.168.15.200,(2)tcp://192.166.1.203,(3)tcp://192.166.1.204,(4)tcp://127.0.0.1\n---select addr:";
+	cout << "Endpoint:\n(1)tcp://192.168.15.200,\n(2)tcp://192.166.1.203,\n(3)tcp://192.166.1.204,\n(4)tcp://127.0.0.1,\n(5)tcp://114.80.156.70\n---select addr:";
 	cin >> s;
 	switch (s)
 	{
+	case 5:g_str_subendpoint = "tcp://114.80.156.70:";
+		break;
 	case 4:g_str_subendpoint = "tcp://127.0.0.1:";
 		break;
 	case 3:g_str_subendpoint = "tcp://192.166.1.204:"; //(g_str_subid, "tcp://192.168.15.200:7788");
@@ -139,7 +162,7 @@ int main(int argc, char* argv[]) {
 		break;
 	}
 
-	cout << "Port:(1)2010,(2)2011,(3)2012,(4)1212,(5)7799,(6)7788\n(7)2030,(8)2031,(9)2032,(10)6001,(11)2003\n---select port:";
+	cout << "Port:\n(1)2010,(2)2011,(3)2012,(4)1212,(5)7799,(6)7788\n(7)2030,(8)2031,(9)2032,(10)6001,(11)2003\n---select port:";
 	cin >> s;
 	switch (s)
 	{
@@ -171,7 +194,7 @@ int main(int argc, char* argv[]) {
 	s = -1;
 	cout << "1)83,2)600446,3)88,4)1002,5)1004,6)1102,7)1104,\n8)1012,9)1014,10)1112,11)1114,\n12)2011,13)2111,14)2012,15)2112,\n"\
 		<< "16)2030,17)2130,18)2031,19)2131,20)2032,21)2132,\n"\
-		<< "22)HL,\n"\
+		<< "22)HL,23)HT,24)HQ,25)HC,26)PK,27)PK.600,\n"\
 		<< "---select topic:";
 	cin >> s;
 	if (s < 20)
@@ -179,6 +202,16 @@ int main(int argc, char* argv[]) {
 	int i = 0;
 	switch (s / 100)
 	{
+	case 27:g_str_topic[i] = "PK.600";
+		break;
+	case 26:g_str_topic[i] = "PK";
+		break;
+	case 25:g_str_topic[i] = "HC";
+		break;
+	case 24:g_str_topic[i] = "HQ";
+		break;
+	case 23:g_str_topic[i] = "HT";
+		break;
 	case 22:g_str_topic[i] = "HL";
 		break;
 	case 21:g_str_topic[i] = "2132";
@@ -230,6 +263,16 @@ int main(int argc, char* argv[]) {
 single:
 	switch (s%100)
 	{
+	case 27:g_str_topic[i] = "PK.600";
+		break;
+	case 26:g_str_topic[i] = "PK";
+		break;
+	case 25:g_str_topic[i] = "HC";
+		break;
+	case 24:g_str_topic[i] = "HQ";
+		break;
+	case 23:g_str_topic[i] = "HT";
+		break;
 	case 22:g_str_topic[i] = "HL";
 		break;
 	case 21:g_str_topic[i] = "2132";
@@ -278,7 +321,13 @@ single:
 		break;
 	}
 
-	stage.AddSubscriber(g_str_subid, g_str_subendpoint);
+	//stage.AddSubscriber(g_str_subid, g_str_subendpoint);
+	ConnectionConfig m_Config;
+	m_Config.id = g_str_subid;
+	m_Config.endpoint = g_str_subendpoint;
+	m_Config.rcvhwm = 100000;
+	stage.AddSubscriber(m_Config);
+
 	ActorPtr actor(new ReplyActor("aa"));
 	stage.AddActor(actor);
 	//stage.Connect(g_str_connid, g_str_subendpoint);

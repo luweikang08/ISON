@@ -93,7 +93,6 @@
     <ClCompile Include="..\sdspubcpp\isonutil.cpp" />
     <ClCompile Include="..\sdspubcpp\jsonhelper.cpp" />
     <ClCompile Include="..\sdspubcpp\timehelper.cpp" />
-    <ClCompile Include="LargeTranMonitor.cpp" />
     <ClCompile Include="TradeAlert.cpp" />
   </ItemGroup>
   <ItemGroup>

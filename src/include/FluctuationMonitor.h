@@ -19,7 +19,7 @@
 #else 
 #define TOPICHEADSIZE sizeof(TOPICHEAD)
 #endif
-#define SECONDDIFF 30
+#define SECONDDIFF 42
 
 enum FM_STORE_RetCode
 {
@@ -51,7 +51,7 @@ inline void PutInfo(std::string& str,const int id,const char* code,const int dat
 		.date(date)
 		.time(time);
 	std::stringstream strStm;
-	strStm << price;
+	strStm << ((double)price / 10000);
 	Signal.putInfo(strStm.str().c_str());
 	str.assign(sendBuf, hdr_send.size() + Signal.sbeBlockLength());
 }

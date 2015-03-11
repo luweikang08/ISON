@@ -12,8 +12,15 @@
 #include "SDS_Signal.hpp"
 #include "data_defs.h"
 
+#ifdef NOTOPICHEAD
+#define TOPICHEADSIZE 0
+#else 
+#define TOPICHEADSIZE sizeof(TOPICHEAD)
+#endif
+
 enum RM_STORE_RetCode
 {
+	RM_NULL,
 	RM_INSERT, //new stockid receive
 	RM_UPDATE, //update volume tunrover.....
 	RM_REPLACE //data time is next minute

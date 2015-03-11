@@ -18,9 +18,9 @@ int GetAppName(const char* src, std::string& dest)
 			return 0;
 		}
 	}
-	else if (srcStr.find('\/', 0) != std::string::npos)  //src is full path
+	else if (srcStr.find('/', 0) != std::string::npos)  //src is full path
 	{
-		offset = srcStr.find_last_of('\/', srcStr.length());
+		offset = srcStr.find_last_of('/', srcStr.length());
 		if (offset == std::string::npos)
 		{
 			return -1;

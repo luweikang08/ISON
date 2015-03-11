@@ -14,10 +14,16 @@
 #define HOLDLOW_SIGNALID      8
 #define OPENLOW_SIGNALID      9
 
+#define LTMERROR_SIGNALID     70
+#define RMMERROR_SIGNALID     71
+#define FMERROR_SIGNALID      72
+
 #define MACD_SIGNALID     1
 #define KDJ_SIGNALID      2
 #define RSI_SIGNALID      3
 #define BOLL_SIGNALID     4
+
+#define PreTopicKline (std::string) "PK."
 
 enum ISON_TRADEPUBTOPIC{
 	TSZ_SHORTELF = 2030,    //SZ,shortelf

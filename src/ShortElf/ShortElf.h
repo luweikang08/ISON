@@ -19,6 +19,8 @@
 #include "RapidMoveMonitor.h"
 #include "FluctuationMonitor.h"
 
+const vector<std::string> VECTOR_TOPIC = { PreTopicLevel2, PreTopicTrans, "", PreTopicQueue, PreTopicCode, "", "", "", PreTopicKline };
+
 const int LARGE_BUY_SIGNALID = 1;
 const int LARGE_SELL_SIGNALID = 2;
 const int LARGE_AUCTION_SIGNAID = 3;
@@ -36,9 +38,9 @@ const char* STR_EP_PUB = "inproc://pubindicator";  //tansform data from stage_su
 const char* CLOG_DIR = "SELog";
 const char* JSON_FILE_DEFAULT = "config.json";
 
-const vector<string> VECTOR_CONFIGKEY = { "version", "releasedate", "loglevel", "subendpoint_src", "subendpoint_kline", "pubendpoint", \
+const vector<string> VECTOR_CONFIGKEY = { "version", "releasedate", "loglevel", "subendpoint_mkt", "subendpoint_kline", "pubendpoint", \
 "large_volum_limit", "large_turnover_limit", "extra_sell_volum_limit", "extra_sell_turnover_limit", "extra_buy_volum_limit", "extra_buy_turnover_limit", "rise_limit", "fall_limit" };
-const vector<string> VECTOR_CONFIGVALUE_DEFAULT = { "V0.00.01", "2015/01/26", "1", "tcp://192.168.15.200:2010", "tcp://192.168.15.200:2031", "tcp://192.168.15.200:2030", \
+const vector<string> VECTOR_CONFIGVALUE_DEFAULT = { "V1.00.00", "2015/02/12", "1", "tcp://192.168.15.200:2003", "tcp://192.168.15.200:2031", "tcp://192.168.15.200:2030", \
 "40000",             "1000000",              "60000",                  "1500000",                   "60000",                 "1500000",                  "1.8",        "1.8"        };
 
 inline void makeinfo(const float & src, string& dest)

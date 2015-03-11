@@ -15,8 +15,8 @@ BOLL_STORE_RetCode BollBase::Store(std::string kline_src)
 	std::memcpy(srcBuffer, kline_src.c_str(), kline_src.size());
 	baseline::MessageHeader hdr_src;
 	baseline::SDS_Kline KK_src;
-	hdr_src.wrap(srcBuffer + sizeof(TOPICHEAD), 0, MESSAGEHEADERVERSION, BUFFELENGTH);
-	KK_src.wrapForDecode(srcBuffer + sizeof(TOPICHEAD), hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
+	hdr_src.wrap(srcBuffer + TOPICHEADSIZE, 0, MESSAGEHEADERVERSION, BUFFELENGTH);
+	KK_src.wrapForDecode(srcBuffer + TOPICHEADSIZE, hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
 
 	if ((KK_src.time() < 93000000) || (KK_src.time() > 113059999 && KK_src.time() < 130000000) || (KK_src.time() > 150059999))
 	{
@@ -31,26 +31,26 @@ BOLL_STORE_RetCode BollBase::Store(std::string kline_src)
 		DataMap.insert(std::pair<std::string, std::vector<int>>(KK_src.code(), v_price));
 		return BOLL_ADD;
 	}
-	if (it->second.size() < DATACNT - 1)
+	if (it->second.size() < DATACNTBOLL - 1)
 	{
 		it->second.push_back(KK_src.close());
 		return BOLL_INSERT;
 	}
 	else
 	{
-		TA_Real    InReal[DATACNT];
+		TA_Real    InReal[DATACNTBOLL];
 		TA_Integer OutBeg;
 		TA_Integer OutNbElement;
-		TA_Real    outRealUpperBand[DATACNT];
-		TA_Real    outRealMiddleBand[DATACNT];
-		TA_Real    outRealLowerBand[DATACNT];
+		TA_Real    outRealUpperBand[DATACNTBOLL];
+		TA_Real    outRealMiddleBand[DATACNTBOLL];
+		TA_Real    outRealLowerBand[DATACNTBOLL];
 		int i = 0;
 		it->second.push_back(KK_src.close());
 		for (auto value : it->second)
 		{
 			InReal[i++] = value;
 		}
-		if (TA_BBANDS(0, DATACNT - 1, &InReal[0], TIMEPERIOD, NBDEVUP, NBDEVDN, MATYPE, &OutBeg, &OutNbElement, &outRealUpperBand[0], &outRealMiddleBand[0], &outRealLowerBand[0]) == TA_SUCCESS)
+		if (TA_BBANDS(0, DATACNTBOLL - 1, &InReal[0], TIMEPERIODBOLL, NBDEVUP, NBDEVDN, MATYPE, &OutBeg, &OutNbElement, &outRealUpperBand[0], &outRealMiddleBand[0], &outRealLowerBand[0]) == TA_SUCCESS)
 		{
 			ResultDataArr[0] = outRealMiddleBand[OutNbElement - 1];
 			ResultDataArr[1] = outRealUpperBand[OutNbElement - 1];

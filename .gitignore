@@ -9,6 +9,8 @@ vcxproj
 
 *.json
 *.exe.*
+*.sdf
+*.opensdf
 /log
 
 /bin
@@ -26,3 +28,4 @@ vcxproj
 /ta-lib
 /*log
 /*Log
+/$tf

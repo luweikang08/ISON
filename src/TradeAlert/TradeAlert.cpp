@@ -38,30 +38,31 @@ unsigned g_num_SZ_sn;
 FILE* g_file;
 vector<string> g_vector_configkey = CONFIG_KEY_VECTOR_DEFAULT;
 map<string, string> g_map_configmap;
-ison::signal::LargeTranMonitor ltm;
+//ison::signal::LargeTranMonitor ltm;
 
 class ProcActor : public Actor {
 public:
 	ProcActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
-		int m_num_position = 0;
+		//int m_num_position = 0;
 
-		string m_str_subtopic_all;
-		string m_str_subtopic_single;
-		m_str_subtopic_all.append(g_str_subtopic);
+		//string m_str_subtopic_all;
+		//string m_str_subtopic_single;
+		//m_str_subtopic_all.append(g_str_subtopic);
 
-		m_str_subtopic_single = m_str_subtopic_all.substr(m_num_position, 4);    //sub first topic
-		Subscribe(g_str_subid, m_str_subtopic_single);
-		while ((m_num_position = m_str_subtopic_all.find_first_of(",", m_num_position)) != string::npos) //if "," is exist,sub follows topic
-		{
-			m_num_position++;
-			m_str_subtopic_single = m_str_subtopic_all.substr(m_num_position, 4);
-			if (m_str_subtopic_single.length()==4)
-			{
-				Subscribe(g_str_subid, m_str_subtopic_single);
-			}	
-		}
+		//m_str_subtopic_single = m_str_subtopic_all.substr(m_num_position, 4);    //sub first topic
+		//Subscribe(g_str_subid, m_str_subtopic_single);
+		//while ((m_num_position = m_str_subtopic_all.find_first_of(",", m_num_position)) != string::npos) //if "," is exist,sub follows topic
+		//{
+		//	m_num_position++;
+		//	m_str_subtopic_single = m_str_subtopic_all.substr(m_num_position, 4);
+		//	if (m_str_subtopic_single.length()==4)
+		//	{
+		//		Subscribe(g_str_subid, m_str_subtopic_single);
+		//	}	
+		//}
+		Subscribe(g_str_subid, "HT.");
 		cout << "Actor start ok" << endl;
 		LOG(INFO) << "Actor start ok";
 		return 0;
@@ -90,7 +91,7 @@ public:
 			hdr.wrap(recvBuf + sizeof(TOPICHEAD), 0, messageHeaderVersion, 256);//parse messageheader
 			CC.wrapForDecode(recvBuf, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), 256);
 
-			LOG_IF(INFO, g_num_loglevel > 6) << "receive data->seqno:" << CC.seqno() << " code:" << m_ch_code << " date:" << CC.date() << " time:" << CC.time()\
+			LOG_IF(INFO, g_num_loglevel > 7) << "receive data->seqno:" << CC.seqno() << " code:" << m_ch_code << " date:" << CC.date() << " time:" << CC.time()\
 				<< " sdstime:" << CC.sDSTime() << " sn:" << CC.sn() << " index:" << CC.index() << " price:" << CC.price() << " volume:" << CC.volume()\
 				<< " turnover:" << CC.turnover() << " bsflag:" << CC.bSFlag() << " orderkind:" << CC.orderKind() << " functioncode:" << CC.functionCode()\
 				<< " askorder" << CC.askOrder() << " bidorder:" << CC.bidOrder();

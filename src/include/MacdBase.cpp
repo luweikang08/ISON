@@ -15,8 +15,8 @@ MACD_STORE_RetCode MacdBase::Store(std::string kline_src)
 	std::memcpy(srcBuffer, kline_src.c_str(), kline_src.size());
 	baseline::MessageHeader hdr_src;
 	baseline::SDS_Kline KK_src;
-	hdr_src.wrap(srcBuffer + sizeof(TOPICHEAD), 0, MESSAGEHEADERVERSION, BUFFELENGTH);
-	KK_src.wrapForDecode(srcBuffer + sizeof(TOPICHEAD), hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
+	hdr_src.wrap(srcBuffer + TOPICHEADSIZE, 0, MESSAGEHEADERVERSION, BUFFELENGTH);
+	KK_src.wrapForDecode(srcBuffer + TOPICHEADSIZE, hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
 
 	if ((KK_src.time() < 93000000) || (KK_src.time() > 113059999 && KK_src.time() < 130000000) || (KK_src.time() > 150059999))
 	{
@@ -31,26 +31,26 @@ MACD_STORE_RetCode MacdBase::Store(std::string kline_src)
 		DataMap.insert(std::pair<std::string, std::vector<int>>(KK_src.code(), v_price));
 		return MACD_ADD;
 	}
-	if (it->second.size() < DATACNT - 1)
+	if (it->second.size() < DATACNTMACD - 1)
 	{
 		it->second.push_back(KK_src.close());
 		return MACD_INSERT;
 	}
 	else
 	{
-		TA_Real    InReal[DATACNT];
+		TA_Real    InReal[DATACNTMACD];
 		TA_Integer OutBeg;
 		TA_Integer OutNbElement;
-		TA_Real    OutMACD[DATACNT];
-		TA_Real    OutMACDSignal[DATACNT];
-		TA_Real    OutMACDHist[DATACNT];
+		TA_Real    OutMACD[DATACNTMACD];
+		TA_Real    OutMACDSignal[DATACNTMACD];
+		TA_Real    OutMACDHist[DATACNTMACD];
 		int i = 0;
 		it->second.push_back(KK_src.close());
 		for (auto value : it->second)
 		{
 			InReal[i++] = value;
 		}
-		if (TA_MACD(0, DATACNT - 1, &InReal[0], FASTPERIOD, SLOWPERIOD, SIGNALPERIOD, &OutBeg, &OutNbElement, &OutMACD[0], &OutMACDSignal[0], &OutMACDHist[0]) == TA_SUCCESS)
+		if (TA_MACD(0, DATACNTMACD - 1, &InReal[0], FASTPERIOD, SLOWPERIOD, SIGNALPERIOD, &OutBeg, &OutNbElement, &OutMACD[0], &OutMACDSignal[0], &OutMACDHist[0]) == TA_SUCCESS)
 		{
 			ResultDataArr[0] = OutMACD[OutNbElement - 1];  //[DATACNT - SLOWPERIOD - SIGNALPERIOD + 1];//OutMACD[16]
 			ResultDataArr[1] = OutMACDSignal[OutNbElement - 1]; //[DATACNT - SLOWPERIOD - SIGNALPERIOD + 1];//OutMACDSignal[16]
@@ -138,4 +138,5 @@ const char* MacdBase::GetDataCode()const
 
 		return II.code();
 	}
+	return NULL;
 }

@@ -40,7 +40,7 @@ public:
 
     static const sbe_uint16_t sbeBlockLength(void)
     {
-        return (sbe_uint16_t)61;
+        return (sbe_uint16_t)69;
     }
 
     static const sbe_uint16_t sbeTemplateId(void)
@@ -749,6 +749,114 @@ public:
     SDS_Kline &turnover(const sbe_uint64_t value)
     {
         *((sbe_uint64_t *)(buffer_ + offset_ + 53)) = SBE_LITTLE_ENDIAN_ENCODE_64(value);
+        return *this;
+    }
+
+    static const int avgPriceId(void)
+    {
+        return 12;
+    }
+
+    static const int avgPriceSinceVersion(void)
+    {
+         return 0;
+    }
+
+    bool avgPriceInActingVersion(void)
+    {
+        return (actingVersion_ >= 0) ? true : false;
+    }
+
+
+    static const char *AvgPriceMetaAttribute(const MetaAttribute::Attribute metaAttribute)
+    {
+        switch (metaAttribute)
+        {
+            case MetaAttribute::EPOCH: return "unix";
+            case MetaAttribute::TIME_UNIT: return "nanosecond";
+            case MetaAttribute::SEMANTIC_TYPE: return "";
+        }
+
+        return "";
+    }
+
+    static const sbe_uint32_t avgPriceNullValue()
+    {
+        return 4294967294;
+    }
+
+    static const sbe_uint32_t avgPriceMinValue()
+    {
+        return 0;
+    }
+
+    static const sbe_uint32_t avgPriceMaxValue()
+    {
+        return 4294967293;
+    }
+
+    sbe_uint32_t avgPrice(void) const
+    {
+        return SBE_LITTLE_ENDIAN_ENCODE_32(*((sbe_uint32_t *)(buffer_ + offset_ + 61)));
+    }
+
+    SDS_Kline &avgPrice(const sbe_uint32_t value)
+    {
+        *((sbe_uint32_t *)(buffer_ + offset_ + 61)) = SBE_LITTLE_ENDIAN_ENCODE_32(value);
+        return *this;
+    }
+
+    static const int trndNumId(void)
+    {
+        return 13;
+    }
+
+    static const int trndNumSinceVersion(void)
+    {
+         return 0;
+    }
+
+    bool trndNumInActingVersion(void)
+    {
+        return (actingVersion_ >= 0) ? true : false;
+    }
+
+
+    static const char *TrndNumMetaAttribute(const MetaAttribute::Attribute metaAttribute)
+    {
+        switch (metaAttribute)
+        {
+            case MetaAttribute::EPOCH: return "unix";
+            case MetaAttribute::TIME_UNIT: return "nanosecond";
+            case MetaAttribute::SEMANTIC_TYPE: return "";
+        }
+
+        return "";
+    }
+
+    static const sbe_uint32_t trndNumNullValue()
+    {
+        return 4294967294;
+    }
+
+    static const sbe_uint32_t trndNumMinValue()
+    {
+        return 0;
+    }
+
+    static const sbe_uint32_t trndNumMaxValue()
+    {
+        return 4294967293;
+    }
+
+    sbe_uint32_t trndNum(void) const
+    {
+        return SBE_LITTLE_ENDIAN_ENCODE_32(*((sbe_uint32_t *)(buffer_ + offset_ + 65)));
+    }
+
+    SDS_Kline &trndNum(const sbe_uint32_t value)
+    {
+        *((sbe_uint32_t *)(buffer_ + offset_ + 65)) = SBE_LITTLE_ENDIAN_ENCODE_32(value);
         return *this;
     }
 };

@@ -12,11 +12,19 @@
 #include "SDS_Transaction.hpp"
 #include "SDS_Kline.hpp"
 
+#ifdef NOTOPICHEAD
+#define TOPICHEADSIZE 0
+#else 
+#define TOPICHEADSIZE sizeof(TOPICHEAD)
+#endif
+
 enum KL_STORE_RetCode
 {
-	KL_INSERT, //new stockid receive
-	KL_UPDATE, //update volume tunrover.....
-	KL_REPLACE //data time is next minute
+	KL_INSERT,  //new stockid receive
+	KL_UPDATE,  //update volume tunrover.....
+	KL_REPLACE, //data time is next minute
+	KL_SUCCESS,
+	KL_FAIL
 };
 
 int getmm(int time); //get minute
@@ -34,10 +42,14 @@ namespace ison
 		public:
 			KLineBase();
 			~KLineBase();
-			KL_STORE_RetCode Store(std::string src);  //store data to map
+			KL_STORE_RetCode Store(std::string tran_src);  //store data to map
 			std::string GetSendStr();
+#ifdef NOTOPICHEAD
+			std::string MakeSendStr();
+#else
 			std::string MakeSendStr(int topic, int sn);
-			const char* GetDataCode()const;
+#endif
+			const std::string GetDataCode()const;
 			bool IsExist(const char* code);
 			bool IsNeedPub();
 			void ResetPubFlag();
@@ -45,8 +57,9 @@ namespace ison
 			int GetDataMapSize()const;
 			void InitIt();
 			void IncreIt();
-			bool ChkItNeedPub();
+			bool ChkItNeedPub(bool playbackmode);
 			const char* GetCodeInIt()const;
+			const int GetSn()const;
 		private:
 			DISALLOW_COPY_AND_ASSIGN(KLineBase);
 			std::map<std::string, std::string> DataMap;//store data,<code,sbedata>,sbedata is messageheader+sds_kline,no topichead
@@ -54,6 +67,8 @@ namespace ison
 			std::string SendStr;    //string need to publish,messageheader+sds_kline,no topichead
 			bool NeedPubFlag = false;
 			TS TimeStatus = OneMinute;
+			unsigned int LastTime;
+			unsigned int Sn;
 		};
 	}
 }

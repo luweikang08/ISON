@@ -11,6 +11,12 @@
 #include "SDS_Signal.hpp"
 #include "data_defs.h"
 
+#ifdef NOTOPICHEAD
+#define TOPICHEADSIZE 0
+#else 
+#define TOPICHEADSIZE sizeof(TOPICHEAD)
+#endif
+
 enum EqualFlag
 {
 	EF_Error,

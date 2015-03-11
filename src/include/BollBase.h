@@ -14,11 +14,17 @@
 #include "SDS_Level2.hpp"
 #include "SDS_Indicator.hpp"
 
-#define DATACNT 50 //data count in queue
-#define TIMEPERIOD 20
+#define DATACNTBOLL 50 //data count in queue
+#define TIMEPERIODBOLL 20
 #define NBDEVUP    2
 #define NBDEVDN    2
 #define MATYPE	   TA_MAType_SMA
+
+#ifdef NOTOPICHEAD
+#define TOPICHEADSIZE 0
+#else 
+#define TOPICHEADSIZE sizeof(TOPICHEAD)
+#endif
 
 enum BOLL_STORE_RetCode
 {

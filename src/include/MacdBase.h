@@ -14,10 +14,16 @@
 #include "SDS_Level2.hpp"
 #include "SDS_Indicator.hpp"
 
-#define DATACNT 50 //data count in queue
+#define DATACNTMACD 50 //data count in queue
 #define FASTPERIOD 12
 #define SLOWPERIOD 26
 #define SIGNALPERIOD 9
+
+#ifdef NOTOPICHEAD
+#define TOPICHEADSIZE 0
+#else 
+#define TOPICHEADSIZE sizeof(TOPICHEAD)
+#endif
 
 enum MACD_STORE_RetCode
 {

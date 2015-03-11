@@ -15,18 +15,28 @@ RapidMoveMinitor::~RapidMoveMinitor()
 RM_STORE_RetCode RapidMoveMinitor::Store(std::string src)
 {
 	char srcBuf[BUFFELENGTH];
-	std::memcpy(srcBuf, src.c_str(), src.size());
+	memcpy(srcBuf, src.c_str(), src.size());
 
 	baseline::MessageHeader hdr_src;
 	baseline::SDS_Kline KK_src;
 
-	hdr_src.wrap(srcBuf + sizeof(TOPICHEAD), 0, MESSAGEHEADERVERSION, BUFFELENGTH);//parse messageheader
-	KK_src.wrapForDecode(srcBuf, sizeof(TOPICHEAD) + hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
+	hdr_src.wrap(srcBuf + TOPICHEADSIZE, 0, MESSAGEHEADERVERSION, BUFFELENGTH);//parse messageheader
+	KK_src.wrapForDecode(srcBuf, TOPICHEADSIZE + hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
 
+	if ((KK_src.time() < 93000000) || (KK_src.time() > 150100000) || ((KK_src.time()>113100000) && (KK_src.time()<130000000)))//9:30-11:31,13:00-15:01
+	{
+		return RM_NULL;
+	}
+	char m_ch_code[16];
+	memcpy(m_ch_code, KK_src.code(), 16);
+	if ((m_ch_code[0] != '0') && (m_ch_code[0] != '3') && (m_ch_code[0] != '6'))
+	{
+		return RM_NULL;
+	}
 	std::map < std::string, std::string>::iterator it = DataMap.find(KK_src.code());
 	if (it == DataMap.end())
 	{
-		std::string m_str_Store(srcBuf + sizeof(TOPICHEAD), hdr_src.size() + KK_src.sbeBlockLength());
+		std::string m_str_Store(srcBuf + TOPICHEADSIZE, hdr_src.size() + KK_src.sbeBlockLength());
 		DataMap.insert(std::pair<std::string, std::string>(KK_src.code(), m_str_Store));
 		return RM_INSERT;
 	}
@@ -36,13 +46,13 @@ RM_STORE_RetCode RapidMoveMinitor::Store(std::string src)
 		SendStr.clear();
 		
 		baseline::SDS_Kline KK_read;
-		std::memcpy(readBuf, it->second.c_str(), hdr_src.size() + KK_read.sbeBlockLength());
+		memcpy(readBuf, it->second.c_str(), hdr_src.size() + KK_read.sbeBlockLength());
 		KK_read.wrapForDecode(readBuf, hdr_src.size(), KK_read.sbeBlockLength(), hdr_src.version(), BUFFELENGTH);
 		MovePercent = volat(KK_read.preClose(), KK_src.close());
 
-		std::memcpy(StoreBuffer, src.c_str(), src.size());
+		memcpy(StoreBuffer, src.c_str() + TOPICHEADSIZE, src.size() - TOPICHEADSIZE);
 
-		std::string m_str_Store(srcBuf + sizeof(TOPICHEAD), hdr_src.size() + KK_src.sbeBlockLength());
+		std::string m_str_Store(srcBuf + TOPICHEADSIZE, hdr_src.size() + KK_src.sbeBlockLength());
 		it->second = m_str_Store;
 		return RM_UPDATE;
 	}
@@ -65,12 +75,12 @@ std::string RapidMoveMinitor::MakeSendStr(int topic, int sn, double rise_limit, 
 
 	baseline::MessageHeader hdr;
 	baseline::SDS_Kline KK;
-	hdr.wrap(StoreBuffer, sizeof(TOPICHEAD), hdr.version(), BUFFELENGTH);
-	KK.wrapForDecode(StoreBuffer, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
+	hdr.wrap(StoreBuffer, TOPICHEADSIZE, MESSAGEHEADERVERSION, BUFFELENGTH);
+	KK.wrapForDecode(StoreBuffer, TOPICHEADSIZE + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
 	TopicHeadSend.topic = topic;
 	DateAndTime m_dtm = GetDateAndTime();
 	TopicHeadSend.ms = (m_dtm.time % 1000);
-	std::memcpy(Code, KK.code(), 16);
+	memcpy(Code, KK.code(), 16);
 	TopicHeadSend.kw = atoi(Code);
 	TopicHeadSend.sn = sn;
 	unsigned int num_tm;
@@ -93,6 +103,10 @@ std::string RapidMoveMinitor::MakeSendStr(int topic, int sn, double rise_limit, 
 	{
 		Signal.signalID(FALL_SIGNALID);
 	}
+	else
+	{
+		Signal.signalID(RMMERROR_SIGNALID);
+	}
 	Signal.putCode(Code);
 	Signal.date(KK.date());
 	Signal.time(KK.time());
@@ -107,32 +121,32 @@ const char *RapidMoveMinitor::GetDataCode(void)
 {
 	baseline::MessageHeader hdr;
 	baseline::SDS_Kline KK;
-	hdr.wrap(StoreBuffer, sizeof(TOPICHEAD), hdr.version(), BUFFELENGTH);
-	KK.wrapForDecode(StoreBuffer, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
+	hdr.wrap(StoreBuffer, TOPICHEADSIZE, MESSAGEHEADERVERSION, BUFFELENGTH);
+	KK.wrapForDecode(StoreBuffer, TOPICHEADSIZE + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
 	return KK.code();
 }
 unsigned int RapidMoveMinitor::GetDataDate()
 {
 	baseline::MessageHeader hdr;
 	baseline::SDS_Kline KK;
-	hdr.wrap(StoreBuffer, sizeof(TOPICHEAD), hdr.version(), BUFFELENGTH);
-	KK.wrapForDecode(StoreBuffer, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
+	hdr.wrap(StoreBuffer, TOPICHEADSIZE, hdr.version(), BUFFELENGTH);
+	KK.wrapForDecode(StoreBuffer, TOPICHEADSIZE + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
 	return KK.date();
 }
 unsigned int RapidMoveMinitor::GetDataTime()
 {
 	baseline::MessageHeader hdr;
 	baseline::SDS_Kline KK;
-	hdr.wrap(StoreBuffer, sizeof(TOPICHEAD), hdr.version(), BUFFELENGTH);
-	KK.wrapForDecode(StoreBuffer, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
+	hdr.wrap(StoreBuffer, TOPICHEADSIZE, hdr.version(), BUFFELENGTH);
+	KK.wrapForDecode(StoreBuffer, TOPICHEADSIZE + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
 	return KK.time();
 }
 unsigned int RapidMoveMinitor::GetDataVolume()
 {
 	baseline::MessageHeader hdr;
 	baseline::SDS_Kline KK;
-	hdr.wrap(StoreBuffer, sizeof(TOPICHEAD), hdr.version(), BUFFELENGTH);
-	KK.wrapForDecode(StoreBuffer, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
+	hdr.wrap(StoreBuffer, TOPICHEADSIZE, hdr.version(), BUFFELENGTH);
+	KK.wrapForDecode(StoreBuffer, TOPICHEADSIZE + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
 	return KK.volume();
 }
 double RapidMoveMinitor::GetMovePercent()
@@ -143,8 +157,8 @@ unsigned int RapidMoveMinitor::GetDataTurnover()
 {
 	baseline::MessageHeader hdr;
 	baseline::SDS_Kline KK;
-	hdr.wrap(StoreBuffer, sizeof(TOPICHEAD), hdr.version(), BUFFELENGTH);
-	KK.wrapForDecode(StoreBuffer, sizeof(TOPICHEAD) + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
+	hdr.wrap(StoreBuffer, TOPICHEADSIZE, hdr.version(), BUFFELENGTH);
+	KK.wrapForDecode(StoreBuffer, TOPICHEADSIZE + hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
 	return KK.turnover();
 }
 

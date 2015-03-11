@@ -13,10 +13,16 @@
 #include "SDS_Level2.hpp"
 #include "SDS_Indicator.hpp"
 
-#define DATACNT    10 //src data count in array
-#define TIMEPERIOD 9
+#define DATACNTKDJ    10 //src data count in array
+#define TIMEPERIODKDJ 9
 #define KPERIOD    3
 #define DPERIOD    3
+
+#ifdef NOTOPICHEAD
+#define TOPICHEADSIZE 0
+#else 
+#define TOPICHEADSIZE sizeof(TOPICHEAD)
+#endif
 
 enum KDJ_STORE_RetCode
 {

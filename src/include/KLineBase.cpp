@@ -10,7 +10,7 @@ int getmm(int time) //get minute
 int getmm(std::string sbe_kline)
 {
 	char recvBuf[BUFFELENGTH];
-	std::memcpy(recvBuf, sbe_kline.c_str(), sbe_kline.size());
+	memcpy(recvBuf, sbe_kline.c_str(), sbe_kline.size());
 	TOPICHEAD  * m_topichead_rec;
 	m_topichead_rec = (TOPICHEAD*)recvBuf;
 
@@ -28,15 +28,15 @@ int gethhmm(int time) //get hour and minute
 
 int gethhmm(std::string sbe_trans)
 {
-	char recvBuf[1024];
-	std::memcpy(recvBuf, sbe_trans.c_str(), sbe_trans.size());
+	char recvBuf[BUFFELENGTH];
+	memcpy(recvBuf, sbe_trans.c_str(), sbe_trans.size());
 	TOPICHEAD  * m_topichead_rec;
 	m_topichead_rec = (TOPICHEAD*)recvBuf;
 
 	baseline::SDS_Transaction  CC;
 	baseline::MessageHeader hdr;
-	hdr.wrap(recvBuf, 0, MESSAGEHEADERVERSION, 1024);//parse messageheader
-	CC.wrapForDecode(recvBuf, hdr.size(), hdr.blockLength(), hdr.version(), 1024);
+	hdr.wrap(recvBuf, 0, MESSAGEHEADERVERSION, BUFFELENGTH);//parse messageheader
+	CC.wrapForDecode(recvBuf, hdr.size(), hdr.blockLength(), hdr.version(), BUFFELENGTH);
 	return gethhmm(CC.time());
 }
 
@@ -71,17 +71,23 @@ KLineBase::KLineBase()
 KLineBase::~KLineBase()
 {
 }
-KL_STORE_RetCode KLineBase::Store(std::string src)
+KL_STORE_RetCode KLineBase::Store(std::string tran_src)
 {
 	char srcBuf[BUFFELENGTH];
-	std::memcpy(srcBuf, src.c_str(), src.size());
+	memcpy(srcBuf, tran_src.c_str(), tran_src.size());
 
 	baseline::MessageHeader hdr_src;
 	baseline::SDS_Transaction TT_src;
 
-	hdr_src.wrap(srcBuf + sizeof(TOPICHEAD), 0, MESSAGEHEADERVERSION, BUFFELENGTH);//parse messageheader
-	TT_src.wrapForDecode(srcBuf, sizeof(TOPICHEAD) + hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
+	hdr_src.wrap(srcBuf + TOPICHEADSIZE, 0, MESSAGEHEADERVERSION, BUFFELENGTH);//parse messageheader
+	TT_src.wrapForDecode(srcBuf, TOPICHEADSIZE + hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
+	LastTime = TT_src.time();
+	Sn = TT_src.sn();
 
+	if ((TT_src.time() < 93000000) || ((TT_src.time() > 113000000) && (TT_src.time() < 130000000)) || (TT_src.time() > 150100000))
+	{
+		return KL_FAIL;
+	}
 	std::map < std::string, std::string>::iterator it = DataMap.find(TT_src.code());
 	if (it == DataMap.end())
 	{
@@ -104,7 +110,9 @@ KL_STORE_RetCode KLineBase::Store(std::string src)
 			.high(TT_src.price())
 			.low(TT_src.price())
 			.volume(TT_src.volume())
-			.turnover(TT_src.turnover());
+			.turnover(TT_src.turnover()); KK_Store
+			.avgPrice((TT_src.volume() == 0 ? 0 : TT_src.turnover() / TT_src.volume()))
+			.trndNum(1);
 		std::string m_str_StoreMess(StoreBuf, hdr_Store.size() + KK_Store.sbeBlockLength());
 		DataMap.insert(std::pair<std::string, std::string>(TT_src.code(), m_str_StoreMess));
 		return KL_INSERT;
@@ -115,7 +123,7 @@ KL_STORE_RetCode KLineBase::Store(std::string src)
 		baseline::SDS_Kline KK_read;
 
 		char readBuf[BUFFELENGTH];
-		std::memcpy(readBuf, it->second.c_str(), hdr_read.size() + KK_read.sbeBlockLength());
+		memcpy(readBuf, it->second.c_str(), hdr_read.size() + KK_read.sbeBlockLength());
 
 		hdr_read.wrap(readBuf, 0, MESSAGEHEADERVERSION, BUFFELENGTH);
 		KK_read.wrapForDecode(readBuf, hdr_read.size(), hdr_read.blockLength(), hdr_read.version(), BUFFELENGTH);
@@ -131,13 +139,17 @@ KL_STORE_RetCode KLineBase::Store(std::string src)
 			{
 				KK_read.low(TT_src.price());
 			}
-			unsigned long long temp;
-			temp = KK_read.volume();
-			temp += TT_src.volume();
-			KK_read.volume(temp);
-			temp = KK_read.turnover();
-			temp += TT_src.turnover();
-			KK_read.turnover(temp);
+			unsigned long long temp_vol,temp_turn;
+			temp_vol = KK_read.volume();
+			temp_vol += TT_src.volume();
+			KK_read.volume(temp_vol);
+			temp_turn = KK_read.turnover();
+			temp_turn += TT_src.turnover();
+			KK_read.turnover(temp_turn);
+			KK_read.avgPrice(temp_vol == 0 ? 0 : temp_turn / temp_vol);
+			unsigned int temp_num;
+			temp_num = KK_read.trndNum();
+			KK_read.trndNum(temp_num + 1);
 			std::string m_str_Store(readBuf, hdr_read.size() + KK_read.sbeBlockLength());
 			it->second = m_str_Store;
 			return KL_UPDATE;
@@ -167,7 +179,9 @@ KL_STORE_RetCode KLineBase::Store(std::string src)
 				.high(TT_src.price())
 				.low(TT_src.price())
 				.volume(TT_src.volume())
-				.turnover(TT_src.turnover());
+				.turnover(TT_src.turnover())
+				.avgPrice((TT_src.volume() == 0 ? 0 : TT_src.turnover() / TT_src.volume()))
+				.trndNum(1);
 			std::string m_str_StoreMess(StoreBuf, hdr_Store.size() + KK_Store.sbeBlockLength());
 			it->second = m_str_StoreMess;
 			return KL_REPLACE;
@@ -178,6 +192,13 @@ std::string KLineBase::GetSendStr()
 {
 	return SendStr;
 }
+
+#ifdef NOTOPICHEAD
+std::string KLineBase::MakeSendStr()
+{
+	return SendStr;
+}
+#else
 std::string KLineBase::MakeSendStr(int topic, int sn)
 {
 	char SendBuf[BUFFELENGTH];
@@ -186,14 +207,14 @@ std::string KLineBase::MakeSendStr(int topic, int sn)
 	baseline::MessageHeader HdrSend;
 	baseline::SDS_Kline KK;
 
-	std::memcpy(SendBuf, SendStr.c_str(), SendStr.size());
+	memcpy(SendBuf, SendStr.c_str(), SendStr.size());
 	HdrSend.wrap(SendBuf, 0, MESSAGEHEADERVERSION, BUFFELENGTH);
 	KK.wrapForDecode(SendBuf, HdrSend.size(), HdrSend.blockLength(), HdrSend.version(), BUFFELENGTH);
 
 	TopicHeadSend.topic = topic;
 	DateAndTime m_dtm = GetDateAndTime();
 	TopicHeadSend.ms = (m_dtm.time % 1000);
-	std::memcpy(Code, KK.code(), 16);
+	memcpy(Code, KK.code(), 16);
 	TopicHeadSend.kw = atoi(Code);
 	TopicHeadSend.sn = sn;
 	unsigned int num_tm;
@@ -206,8 +227,9 @@ std::string KLineBase::MakeSendStr(int topic, int sn)
 	str_temp.append(SendStr);
 	return str_temp;
 }
+#endif
 
-const char* KLineBase::GetDataCode()const
+const std::string KLineBase::GetDataCode()const
 {
 	if (SendStr.size() > 0)
 	{
@@ -215,12 +237,14 @@ const char* KLineBase::GetDataCode()const
 		baseline::MessageHeader HdrSend;
 		baseline::SDS_Kline KK;
 
-		std::memcpy(Buffer, SendStr.c_str(), SendStr.size());
+		memcpy(Buffer, SendStr.c_str(), SendStr.size());
 		HdrSend.wrap(Buffer, 0, MESSAGEHEADERVERSION, BUFFELENGTH);
 		KK.wrapForDecode(Buffer, HdrSend.size(), HdrSend.blockLength(), HdrSend.version(), BUFFELENGTH);
 
-		return KK.code();
+		std::string m_str_temp(KK.code(),16);
+		return m_str_temp;
 	}
+	return NULL;
 }
 
 bool KLineBase::IsExist(const char* code)
@@ -237,7 +261,15 @@ bool KLineBase::IsExist(const char* code)
 }
 bool KLineBase::IsNeedPub()
 {
-	return NeedPubFlag;
+	if (NeedPubFlag)
+	{
+		NeedPubFlag = false; //reset NeedPubFlag
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 void KLineBase::ResetPubFlag()
 {
@@ -261,18 +293,27 @@ void KLineBase::IncreIt()
 	}
 }
 
-bool KLineBase::ChkItNeedPub()
+bool KLineBase::ChkItNeedPub(bool playbackmode)
 {
 	char readBuf[BUFFELENGTH];
 	std::string RetStr;
-	std::memcpy(readBuf, Itera->second.c_str(), Itera->second.size());
+	memcpy(readBuf, Itera->second.c_str(), Itera->second.size());
 
 	baseline::MessageHeader hdr_Read;
 	baseline::SDS_Kline KK_Read;
 	hdr_Read.wrap(readBuf, 0, MESSAGEHEADERVERSION, BUFFELENGTH);
 	KK_Read.wrapForDecode(readBuf, hdr_Read.size(), hdr_Read.blockLength(), hdr_Read.version(), BUFFELENGTH);
-
-	DateAndTime m_DateAndTime_Now = GetDateAndTime();
+	
+	DateAndTime m_DateAndTime_Now;
+	if (playbackmode)
+	{
+		m_DateAndTime_Now.date = KK_Read.date();
+		m_DateAndTime_Now.time = LastTime;
+	}
+	else
+	{
+		m_DateAndTime_Now = GetDateAndTime();
+	}
 	DateAndTime m_DateAndTime_Read;
 	m_DateAndTime_Read.date = KK_Read.date();
 	m_DateAndTime_Read.time = KK_Read.time();
@@ -284,12 +325,20 @@ bool KLineBase::ChkItNeedPub()
 
 		char storeBuf[BUFFELENGTH];
 		baseline::SDS_Kline KK_store;
-		std::memcpy(storeBuf, readBuf, hdr_Read.size());
+		memcpy(storeBuf, readBuf, hdr_Read.size());
 		KK_store.wrapForEncode(storeBuf, hdr_Read.size(), hdr_Read.size() + KK_store.sbeBlockLength());
 		KK_store.putCode(KK_Read.code());
 		KK_store.date(KK_Read.date());
 		//time increase one minute
-		KK_store.time((KK_Read.time() / 100000) % 100 >= 59 ? (KK_Read.time() / 10000000 + 1) * 10000000 + KK_Read.time() % 100000 : (KK_Read.time() / 10000000) * 10000000 + ((KK_Read.time() / 100000) % 100 + 1) * 100000 + KK_Read.time() % 100000);
+		//KK_store.time((KK_Read.time() / 100000) % 100 >= 59 ? (KK_Read.time() / 10000000 + 1) * 10000000 + KK_Read.time() % 100000 : (KK_Read.time() / 10000000) * 10000000 + ((KK_Read.time() / 100000) % 100 + 1) * 100000 + KK_Read.time() % 100000);
+		if (KK_Read.time() > 235999999)
+		{
+			KK_store.time(0);
+		}
+		else
+		{
+			KK_store.time((KK_Read.time() / 100000) % 100 >= 59 ? (KK_Read.time() / 10000000 + 1) * 10000000 + KK_Read.time() % 100000 : (KK_Read.time() + 100000));
+		}
 		KK_store.timeStatus(KK_Read.timeStatus());
 		KK_store.preClose(KK_Read.close());
 		KK_store.open(KK_Read.close());
@@ -298,9 +347,18 @@ bool KLineBase::ChkItNeedPub()
 		KK_store.low(KK_Read.close());
 		KK_store.volume(0);
 		KK_store.turnover(0);
+		KK_store.avgPrice(0);
+		KK_store.trndNum(0);
 		std::string storeStr(storeBuf, hdr_Read.size() + KK_Read.sbeBlockLength());
 		DataMap[Itera->first] = storeStr;
-		return true;
+		if ((KK_Read.time() < 93000000) || ((KK_Read.time() > 113100000) && (KK_Read.time() < 130000000)) || (KK_Read.time() > 150200000)) //do not pub info beyond market time
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -308,7 +366,7 @@ bool KLineBase::ChkItNeedPub()
 const char* KLineBase::GetCodeInIt()const
 {
 	char readBuf[BUFFELENGTH];
-	std::memcpy(readBuf, Itera->second.c_str(), Itera->second.size());
+	memcpy(readBuf, Itera->second.c_str(), Itera->second.size());
 
 	baseline::MessageHeader hdr_Read;
 	baseline::SDS_Kline KK_Read;
@@ -316,4 +374,8 @@ const char* KLineBase::GetCodeInIt()const
 	KK_Read.wrapForDecode(readBuf, hdr_Read.size(), hdr_Read.blockLength(), hdr_Read.version(), BUFFELENGTH);
 
 	return KK_Read.code();
+}
+const int KLineBase::GetSn()const
+{
+	return Sn;
 }

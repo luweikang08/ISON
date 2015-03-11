@@ -35,17 +35,18 @@ public:
 	SubActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
-#ifdef TOPICNEW
+#ifdef NOTOPICHEAD
 		Subscribe(SUBID_OF_SUB1, PreTopicLevel2);
 		Subscribe(SUBID_OF_SUB1, PreTopicTrans);
+		Subscribe(SUBID_OF_SUB2, PreTopicKline);
 #else
 		Subscribe(SUBID_OF_SUB1, itostring(ISON_SDS2TGW::TSZ_LEVEL2));
 		Subscribe(SUBID_OF_SUB1, itostring(ISON_SDS2TGW::TSH_LEVEL2));
 		Subscribe(SUBID_OF_SUB1, itostring(ISON_SDS2TGW::TSZ_TRANSACTION));
 		Subscribe(SUBID_OF_SUB1, itostring(ISON_SDS2TGW::TSH_TRANSACTION));
-#endif
 		Subscribe(SUBID_OF_SUB2, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
 		Subscribe(SUBID_OF_SUB2, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));
+#endif
 		cout << "SubActor start ok" << endl;
 		LOG(INFO) << "SubActor start ok";
 		return 0;
@@ -57,11 +58,26 @@ public:
 			string smss;
 			smss = e.message();
 			char buffer[BUFFELENGTH];
-			std::memcpy(buffer, smss.c_str(), smss.size());
-
+			memcpy(buffer, smss.c_str(), smss.size());
+#ifdef NOTOPICHEAD
+			baseline::MessageHeader hdr;
+			hdr.wrap(buffer,0,MESSAGEHEADERVERSION,BUFFELENGTH);
+			if (hdr.templateId()<10)
+			{
+				if (VECTOR_TOPIC[hdr.templateId() - 1] == "")
+				{
+					LOG_IF(INFO, g_num_loglevel > 5) << "parase MessageHeader error.";
+				}
+				else
+				{
+					Publish(PUBID_OF_SUB, VECTOR_TOPIC[hdr.templateId() - 1], smss);
+				}
+			}
+#else
 			TOPICHEAD* m_TopicHead;
 			m_TopicHead = (TOPICHEAD*) buffer;
 			Publish(PUBID_OF_SUB, itostring(m_TopicHead->topic), smss);
+#endif
 		}
 		return 0;
 	}
@@ -72,10 +88,14 @@ public:
 	LtmActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
+#ifdef NOTOPICHEAD
+		Subscribe(SUBID_OF_PROC, PreTopicTrans);
+#else
 		Subscribe(SUBID_OF_PROC, itostring(ISON_SDS2TGW::TSZ_TRANSACTION));
 		Subscribe(SUBID_OF_PROC, itostring(ISON_SDS2TGW::TSH_TRANSACTION));
-		cout << "Actor start ok" << endl;
-		LOG(INFO) << "Actor start ok";
+#endif
+		cout << "LtmActor start ok" << endl;
+		LOG(INFO) << "LtmActor start ok";
 		return 0;
 	}
 	int OnEvent(Event& e)
@@ -83,13 +103,12 @@ public:
 		if (e.type() == kPublish)
 		{
 			LOG_IF(INFO, g_num_loglevel > 6) << "Data receive.";
-			cout << ".";
 			int m_pubtopic;
 			int m_num_sn;
 			char m_ch_code[16];
 
 			g_Ltm.Store(e.message());//new
-			std::memcpy(m_ch_code, g_Ltm.GetDataCode(), 16);//new
+			memcpy(m_ch_code, g_Ltm.GetDataCode(), 16);//new
 
 			if ((g_Ltm.GetDataTime() < 91500000) || (g_Ltm.GetDataTime() > 151000000))//new
 			{
@@ -117,7 +136,6 @@ public:
 				}
 
 				Publish(PUBID_OF_PROC, itostring(m_pubtopic), g_Ltm.MakeSendStr(m_pubtopic, m_num_sn));
-				cout << "*";
 				LOG_IF(INFO, g_num_loglevel > 5) << "topic:" << m_pubtopic << "  sn:" << m_num_sn << "volum case publish success.";
 				if (m_ch_code[8] == 'Z' || m_ch_code[8] == 'z')  //shenzhen stock
 				{
@@ -138,10 +156,14 @@ public:
 	RmmActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
+#ifdef NOTOPICHEAD
+		Subscribe(SUBID_OF_PROC, PreTopicKline);
+#else
 		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSZ_KLINEONEMINUTE));
 		Subscribe(SUBID_OF_PROC, itostring(ISON_TRADEPUBTOPIC::TSH_KLINEONEMINUTE));
-		cout << "Actor start ok" << endl;
-		LOG(INFO) << "Actor start ok";
+#endif
+		cout << "RmmActor start ok" << endl;
+		LOG(INFO) << "RmmActor start ok";
 		return 0;
 	}
 	int OnEvent(Event& e)
@@ -149,7 +171,6 @@ public:
 		if (e.type() == kPublish)
 		{
 			LOG_IF(INFO, g_num_loglevel > 6) << "Data receive.";
-			cout << ".";
 			int m_pubtopic;
 			int m_num_sn;
 			char m_ch_code[16];
@@ -159,7 +180,12 @@ public:
 				g_Rmm.CompStatus(g_num_rise_limit, g_num_fall_limit);
 				if (g_Rmm.IsNeedPub())
 				{
-					std::memcpy(m_ch_code, g_Rmm.GetDataCode(), 16);
+					memcpy(m_ch_code, g_Rmm.GetDataCode(), 16);
+					if ((m_ch_code[0] != '0') && (m_ch_code[0] != '3') && (m_ch_code[0] != '6'))
+					{
+						LOG_IF(INFO, g_num_loglevel > 6) << "stockid is not 0* 3* 6*.";
+						return -1;
+					}
 					if (m_ch_code[8] == 'Z' || m_ch_code[8] == 'z')  //shenzhen stock
 					{
 						m_pubtopic = ISON_TRADEPUBTOPIC::TSZ_SHORTELF;
@@ -172,7 +198,6 @@ public:
 					}
 
 					Publish(PUBID_OF_PROC, itostring(m_pubtopic), g_Rmm.MakeSendStr(m_pubtopic, m_num_sn, g_num_rise_limit, g_num_fall_limit));
-					cout << "*";
 					LOG_IF(INFO, g_num_loglevel > 5) << "topic:" << m_pubtopic << "  sn:" << m_num_sn << "volum case publish success.";
 					if (m_ch_code[8] == 'Z' || m_ch_code[8] == 'z')  //shenzhen stock
 					{
@@ -195,10 +220,14 @@ public:
 	FmActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
+#ifdef NOTOPICHEAD
+		Subscribe(SUBID_OF_PROC, PreTopicLevel2);
+#else
 		Subscribe(SUBID_OF_PROC, itostring(ISON_SDS2TGW::TSZ_LEVEL2));
 		Subscribe(SUBID_OF_PROC, itostring(ISON_SDS2TGW::TSH_LEVEL2));
-		cout << "Actor start ok" << endl;
-		LOG(INFO) << "Actor start ok";
+#endif
+		cout << "FmActor start ok" << endl;
+		LOG(INFO) << "FmActor start ok";
 		return 0;
 	}
 	int OnEvent(Event& e)
@@ -206,7 +235,6 @@ public:
 		if (e.type() == kPublish)
 		{
 			LOG_IF(INFO, g_num_loglevel > 6) << "Data receive.";
-			cout << ".";
 			int m_pubtopic;
 			int m_num_sn;
 			char m_ch_code[16];
@@ -214,7 +242,7 @@ public:
 			FM_STORE_RetCode rc = g_Fm.Store(e.message());//new
 			if (rc == FM_HOLDHIGH || rc == FM_OPENHIGH || rc == FM_HOLDLOW || rc == FM_OPENLOW)
 			{
-				std::memcpy(m_ch_code, g_Fm.GetDataCode(), 16);//new
+				memcpy(m_ch_code, g_Fm.GetDataCode(), 16);//new
 
 				if ((g_Fm.GetDataTime() < 91500000) || (g_Fm.GetDataTime() > 151000000))//new
 				{
@@ -239,8 +267,7 @@ public:
 				}
 
 				Publish(PUBID_OF_PROC, itostring(m_pubtopic), g_Fm.MakeSendStr(m_pubtopic, m_num_sn));
-				cout << "*";
-				LOG_IF(INFO, g_num_loglevel > 5) << "topic:" << m_pubtopic << "  sn:" << m_num_sn << "volum case publish success.";
+				LOG_IF(INFO, g_num_loglevel > 5) << "topic:" << m_pubtopic << "  sn:" << m_num_sn << "high/low limit case publish success.";
 				if (m_ch_code[8] == 'Z' || m_ch_code[8] == 'z')  //shenzhen stock
 				{
 					g_num_SZ_sn++;
@@ -261,8 +288,8 @@ public:
 	PubActor(const std::string& id) : Actor(id) {}
 	int OnStart(ActorContext&)
 	{
-		Subscribe(SUBID_OF_PUB, itostring(ISON_TRADEPUBTOPIC::TSZ_POINDICATOR));
-		Subscribe(SUBID_OF_PUB, itostring(ISON_TRADEPUBTOPIC::TSH_POINDICATOR));
+		Subscribe(SUBID_OF_PUB, itostring(ISON_TRADEPUBTOPIC::TSZ_SHORTELF));
+		Subscribe(SUBID_OF_PUB, itostring(ISON_TRADEPUBTOPIC::TSH_SHORTELF));
 		cout << "PubActor start ok" << endl;
 		LOG(INFO) << "PubActor start ok";
 		return 0;
@@ -274,12 +301,11 @@ public:
 			string smss;
 			smss = e.message();
 			char buffer[BUFFELENGTH];
-			std::memcpy(buffer, smss.c_str(), smss.size());
+			memcpy(buffer, smss.c_str(), smss.size());
 
 			TOPICHEAD* m_TopicHead;
 			m_TopicHead = (TOPICHEAD*)buffer;
 			Publish(PUBID_OF_PUB, itostring(m_TopicHead->topic), smss);
-			cout << "x";
 		}
 		return 0;
 	}
@@ -326,7 +352,7 @@ int main(int argc, char* argv[])
 				g_num_extra_buy_turnover_limit = atoi(g_map_configmap[VECTOR_CONFIGKEY[11]].c_str());
 				g_num_rise_limit = atof(g_map_configmap[VECTOR_CONFIGKEY[12]].c_str());
 				g_num_fall_limit = atof(g_map_configmap[VECTOR_CONFIGKEY[13]].c_str());
-				cout << "get setting success.";
+				cout << "get setting success." << endl;
 			}
 			catch (exception ex)
 			{

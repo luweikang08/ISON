@@ -15,8 +15,8 @@ KDJ_STORE_RetCode KdjBase::Store(std::string kline_src)
 	std::memcpy(srcBuffer, kline_src.c_str(), kline_src.size());
 	baseline::MessageHeader hdr_src;
 	baseline::SDS_Kline KK_src;
-	hdr_src.wrap(srcBuffer + sizeof(TOPICHEAD), 0, MESSAGEHEADERVERSION, BUFFELENGTH);
-	KK_src.wrapForDecode(srcBuffer + sizeof(TOPICHEAD), hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
+	hdr_src.wrap(srcBuffer + TOPICHEADSIZE, 0, MESSAGEHEADERVERSION, BUFFELENGTH);
+	KK_src.wrapForDecode(srcBuffer + TOPICHEADSIZE, hdr_src.size(), hdr_src.blockLength(), hdr_src.version(), BUFFELENGTH);
 
 	if ((KK_src.time() < 93000000) || (KK_src.time() > 113059999 && KK_src.time() < 130000000) || (KK_src.time() > 150059999))
 	{
@@ -35,7 +35,7 @@ KDJ_STORE_RetCode KdjBase::Store(std::string kline_src)
 		DataMap.insert(std::pair<std::string, std::vector<std::vector<int>>>(KK_src.code(), v_data));
 		return KDJ_ADD;
 	}
-	if (it->second.size() < DATACNT - 1)
+	if (it->second.size() < DATACNTKDJ - 1)
 	{
 		std::vector<int> temp;
 		temp.push_back(KK_src.high());
@@ -46,12 +46,12 @@ KDJ_STORE_RetCode KdjBase::Store(std::string kline_src)
 	}
 	else
 	{
-		double     InReal[DATACNT][3];
+		double     InReal[DATACNTKDJ][3];
 		int        OutBeg;
 		int        OutNbElement;
-		double     OutK[DATACNT];
-		double     OutD[DATACNT];
-		double     OutJ[DATACNT];
+		double     OutK[DATACNTKDJ];
+		double     OutD[DATACNTKDJ];
+		double     OutJ[DATACNTKDJ];
 
 		std::vector<int> temp;
 		temp.push_back(KK_src.high());
@@ -70,7 +70,7 @@ KDJ_STORE_RetCode KdjBase::Store(std::string kline_src)
 			}
 			i++;
 		}
-		if (KDJ(0, DATACNT - 1, InReal, TIMEPERIOD, KPERIOD, DPERIOD, &OutBeg, &OutNbElement, &OutK[0], &OutD[0], &OutJ[0]) == 0)
+		if (KDJ(0, DATACNTKDJ - 1, InReal, TIMEPERIODKDJ, KPERIOD, DPERIOD, &OutBeg, &OutNbElement, &OutK[0], &OutD[0], &OutJ[0]) == 0)
 		{
 			ResultDataArr[0] = OutK[OutNbElement - 1];
 			ResultDataArr[1] = OutD[OutNbElement - 1];
@@ -158,4 +158,5 @@ const char* KdjBase::GetDataCode()const
 
 		return II.code();
 	}
+	return NULL;
 }

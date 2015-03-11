@@ -1,9 +1,25 @@
-                       KLine Utility Update Notic
+                       KLine Utility Update Notice
 	          ==========================================
+-------------------
+V1.00.00 2015/03/04
+-------------------
+	1.Add:add AvgPrice,TrndNum to sds_kline.hpp
+	2.Add:add rechwm,sndhwm to config.json
+	3.Modify:change AddSubscriber(sub_id,endpoint) to AddSubscriber(cc)
+							                                      luweikang, 2015/03/04
+-------------------
+V0.00.04 2015/02/11
+-------------------
+	1.Modify:change port to 2003,data with no TOPICHEAD.
+	2.Add:add class Klinebase.
+							                                      luweikang, 2015/01/28
+-------------------
+V0.00.03 2015/01/28
+-------------------
+							                                      luweikang, 2015/01/28
 -------------------
 V0.00.02 2015/01/23
 -------------------
-	1. First Release.
 							                                      luweikang, 2015/01/23
 -------------------
 V0.00.01 2015/01/15
